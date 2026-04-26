@@ -5,38 +5,32 @@
 
 {% block content %}
 
-<div class="form-container">
+<div class="card" style="max-width:500px; margin:auto;">
 
-    <div class="card form-card">
+    <h2>Edit Vendor</h2>
 
-        <h1 class="title" style="margin-bottom: 10px;">Edit Vendor</h1>
+    <form method="POST">
+        {% csrf_token %}
 
-        <form method="POST">
-            {% csrf_token %}
+        <p>Name</p>
+        <input type="text" name="name" value="{{ vendor.name }}">
 
-            <label>Name</label>
-            <input type="text" name="name" value="{{ vendor.name }}" placeholder="Enter vendor name">
+        <p>Phone</p>
+        <input type="text" name="phone" value="{{ vendor.phone }}">
 
-            <label>Phone</label>
-            <input type="text" name="phone" value="{{ vendor.phone }}" placeholder="Enter phone number">
+        <p>Social Media</p>
+        <input type="text" name="social_media" value="{{ vendor.social_media }}">
 
-            <label>Social Media</label>
-            <input type="text" name="social_media" value="{{ vendor.social_media }}" placeholder="Instagram / TikTok / etc">
+        <p>Description</p>
+        <input type="text" name="description" value="{{ vendor.description }}">
 
-            <label>Description</label>
-            <input type="text" name="description" value="{{ vendor.description }}" placeholder="Short description">
+        <br><br>
 
-            <button type="submit" class="btn btn-view full-btn">
-                Save Changes
-            </button>
+        <button type="submit" class="btn btn-view">Save</button>
 
-            <a href="{% url 'vendor_list' %}" class="btn btn-back full-btn" style="text-align:center;">
-                Cancel
-            </a>
+        <a href="{% url 'vendor_list' %}" class="btn">Cancel</a>
 
-        </form>
-
-    </div>
+    </form>
 
 </div>
 

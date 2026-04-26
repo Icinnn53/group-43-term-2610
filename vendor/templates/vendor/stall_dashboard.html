@@ -6,24 +6,38 @@
 
 <!-- SUMMARY -->
 <div class="card">
+
     <p><b>Total Stalls:</b> {{ total_stalls }}</p>
     <p><b>Total Capacity:</b> {{ total_capacity }}</p>
     <p><b>Total Rental Fee:</b> RM {{ total_fee }}</p>
+
 </div>
 
 <!-- LIST -->
 {% for s in stalls %}
 <div class="card">
 
-    <p><b>{{ s.stall_name }}</b></p>
-    <p>Event: {{ s.event_name }}</p>
-    <p>Category: {{ s.category }}</p>
+    <p><b>Vendor:</b> {{ s.vendor.name }}</p>
+    <p><b>Event:</b> {{ s.event_name }}</p>
+    <p><b>Location:</b> {{ s.location }}</p>
 
-    <p>Fee: RM {{ s.rental_fee }}</p>
-    <p>Capacity: {{ s.capacity }}</p>
+    <p><b>Fee:</b> RM {{ s.rental_fee }}</p>
+    <p><b>Capacity:</b> {{ s.capacity }}</p>
+
+    <p>
+        <b>Status:</b>
+        {% if s.is_booked %}
+            🔴 Booked
+        {% else %}
+            🟢 Available
+        {% endif %}
+    </p>
 
     <a href="{% url 'stall_edit' s.id %}" class="btn btn-edit">Edit</a>
+
 </div>
+{% empty %}
+<p>No stalls found.</p>
 {% endfor %}
 
 {% endblock %}

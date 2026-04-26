@@ -4,43 +4,46 @@
 
 {% block content %}
 
-<div class="container">
+<div class="card" style="max-width:500px; margin:auto;">
 
-    <div class="form-card card">
+    <h1 class="title">Create Stall</h1>
 
-        <h1 class="title">Create Stall</h1>
+    <form method="POST">
+        {% csrf_token %}
 
-        <form method="POST">
-            {% csrf_token %}
+        <!-- Vendor -->
+        <label>Vendor</label>
+        <select name="vendor">
+            {% for v in vendors %}
+                <option value="{{ v.id }}">{{ v.name }}</option>
+            {% endfor %}
+        </select>
 
-            <!-- Vendor -->
-            <label>Vendor</label>
-            <select name="vendor">
-                {% for v in vendors %}
-                    <option value="{{ v.id }}">{{ v.name }}</option>
-                {% endfor %}
-            </select>
+        <br><br>
 
-            <!-- Stall Name -->
-            <label>Stall Name</label>
-            <input type="text" name="stall_name" placeholder="Enter stall name">
+        <!-- Event Name -->
+        <label>Event Name</label>
+        <input type="text" name="event_name" required>
 
-            <!-- Location -->
-            <label>Location</label>
-            <input type="text" name="location" placeholder="Enter location">
+        <!-- Location -->
+        <label>Location</label>
+        <input type="text" name="location" required>
 
-            <!-- Event Name -->
-            <label>Event Name</label>
-            <input type="text" name="event_name" placeholder="Enter event name">
+        <!-- Capacity -->
+        <label>Capacity</label>
+        <input type="number" name="capacity" value="0">
 
-            <!-- Button -->
-            <button type="submit" class="btn btn-view full-btn">
-                Create Stall
-            </button>
+        <!-- Rental Fee -->
+        <label>Rental Fee</label>
+        <input type="number" name="rental_fee" step="0.01" value="0">
 
-        </form>
+        <br><br>
 
-    </div>
+        <button type="submit" class="btn btn-view full-btn">
+            Create Stall
+        </button>
+
+    </form>
 
 </div>
 

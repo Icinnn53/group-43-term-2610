@@ -119,6 +119,10 @@
         <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
         <a href="{% url 'create_event' %}" class="btn">+ Create Event</a>
 
+        <!-- ✅ ADDED ONLY THESE 2 -->
+        <a href="/vendor/" class="btn">Vendor Stalls</a>
+        <a href="/listings/" class="btn">Listings</a>
+
         <form action="{% url 'logout' %}" method="post" style="margin:0;">
             {% csrf_token %}
             <button class="logout-btn">Logout</button>

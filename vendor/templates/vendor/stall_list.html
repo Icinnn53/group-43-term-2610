@@ -8,12 +8,20 @@
 <div class="card">
 
     <p><b>Vendor:</b> {{ s.vendor.name }}</p>
-    <p><b>Category:</b> {{ s.category }}</p>
-    <p><b>Location:</b> {{ s.location }}</p>
     <p><b>Event:</b> {{ s.event_name }}</p>
-    <p><b>Status:</b> {{ s.status }}</p>
-    <p><b>Rental Fee:</b> RM {{ s.rental_fee }}</p>
+    <p><b>Location:</b> {{ s.location }}</p>
+
     <p><b>Capacity:</b> {{ s.capacity }}</p>
+    <p><b>Rental Fee:</b> RM {{ s.rental_fee }}</p>
+
+    <p>
+        <b>Status:</b>
+        {% if s.is_booked %}
+            🔴 Booked
+        {% else %}
+            🟢 Available
+        {% endif %}
+    </p>
 
 </div>
 {% empty %}

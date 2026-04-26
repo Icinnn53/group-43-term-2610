@@ -4,11 +4,23 @@
 
 <h1 class="title">Edit Stall</h1>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
+<div class="card" style="max-width:500px; margin:auto;">
 
-    <button type="submit" class="btn btn-view">Save</button>
-</form>
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-view" style="width:100%;">
+            Save Changes
+        </button>
+
+        <a href="{% url 'stall_list' %}" class="btn" style="display:block; text-align:center; margin-top:10px;">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
 
 {% endblock %}

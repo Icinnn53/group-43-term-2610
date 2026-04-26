@@ -6,30 +6,30 @@
 
 <h1 class="title">Vendor List</h1>
 
-{% if vendors %}
+<!-- ✅ ADDED NAV BUTTONS -->
+<div style="margin-bottom: 15px;">
+    <a href="/home/" class="btn">Home</a>
+    <a href="/listings/" class="btn">Listings</a>
+</div>
 
-    {% for vendor in vendors %}
-    <div class="card">
+{% for vendor in vendors %}
+<div class="card">
 
-        <p><strong>🏪 Name:</strong> {{ vendor.name }}</p>
-        <p><strong>📞 Phone:</strong> {{ vendor.phone }}</p>
-        <p><strong>🌐 Social Media:</strong> {{ vendor.social_media }}</p>
-        <p><strong>📝 Description:</strong> {{ vendor.description }}</p>
+    <p><strong>🏪 Name:</strong> {{ vendor.name }}</p>
+    <p><strong>📞 Phone:</strong> {{ vendor.phone }}</p>
+    <p><strong>🌐 Social:</strong> {{ vendor.social_media }}</p>
+    <p><strong>📝 Description:</strong> {{ vendor.description }}</p>
 
-        <div style="margin-top: 12px;">
-            <a href="{% url 'vendor_detail' vendor.id %}" class="btn btn-view">View</a>
-            <a href="{% url 'vendor_edit' vendor.id %}" class="btn btn-edit">Edit</a>
-        </div>
-
-    </div>
-    {% endfor %}
-
-{% else %}
-
-    <div class="card" style="text-align:center;">
-        <p>No vendors found.</p>
+    <div style="margin-top: 12px;">
+        <a href="{% url 'vendor_detail' vendor.id %}" class="btn btn-view">View</a>
+        <a href="{% url 'vendor_edit' vendor.id %}" class="btn btn-edit">Edit</a>
     </div>
 
-{% endif %}
+</div>
+{% empty %}
+<div class="card" style="text-align:center;">
+    <p>No vendors found.</p>
+</div>
+{% endfor %}
 
 {% endblock %}
