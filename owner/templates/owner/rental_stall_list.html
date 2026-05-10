@@ -1,0 +1,28 @@
+{% extends 'owner/base.html' %}
+
+{% block content %}
+
+<h1 class="title">No Event / Rental Stalls</h1>
+
+<a href="{% url 'stall_list' %}" class="btn">
+    Back to All Stalls
+</a>
+
+{% for s in stalls %}
+<div class="card">
+
+    <h3>{{ s.name }}</h3>
+    <p>{{ s.location }}</p>
+
+    <p style="color:#9aa4b2;">
+        Rental Stall (No Event)
+    </p>
+
+    <a href="{% url 'stall_detail' s.id %}" class="btn">View</a>
+
+</div>
+{% empty %}
+<p>No rental stalls found.</p>
+{% endfor %}
+
+{% endblock %}

@@ -20,8 +20,15 @@
             <label>Stall</label>
             <select name="stall" class="form-control" required>
                 <option value="">-- Select Stall --</option>
+
                 {% for stall in stalls %}
-                    <option value="{{ stall.id }}">{{ stall.name }}</option>
+                    <option value="{{ stall.id }}"
+                        {% if stall.id|stringformat:"s" == preselected_stall_id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ stall.name }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
@@ -45,9 +52,11 @@
             Create
         </button>
 
-        <a href="{% url 'product_list' %}" class="btn btn-secondary">
-            Back
+        <!-- 🔥 FIXED BACK BUTTON -->
+        <a href="{% url 'stall_list' %}" class="btn btn-secondary">
+            Back to Stalls
         </a>
+
     </form>
 
 </div>

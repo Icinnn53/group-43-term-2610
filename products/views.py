@@ -32,9 +32,12 @@ def product_by_stall(request, stall_id):
     })
 
 
-# ================= ADD PRODUCT =================
+# ================= ADD PRODUCT (STAY IN STALL CONTEXT) =================
 def product_create(request):
     stalls = Stall.objects.all()
+
+    # 🔥 auto-select stall from URL (?stall=1)
+    preselected_stall_id = request.GET.get('stall')
 
     if request.method == "POST":
         stall_id = request.POST.get('stall')
@@ -42,7 +45,8 @@ def product_create(request):
         if not stall_id:
             return render(request, 'products/product_create.html', {
                 'stalls': stalls,
-                'error': 'Please select a stall.'
+                'error': 'Please select a stall.',
+                'preselected_stall_id': preselected_stall_id
             })
 
         stall = get_object_or_404(Stall, id=stall_id)
@@ -54,10 +58,12 @@ def product_create(request):
             description=request.POST.get('description') or ""
         )
 
-        return redirect('product_list')
+        # 🔥 IMPORTANT: go back to same stall page (not global list)
+        return redirect('product_by_stall', stall_id=stall.id)
 
     return render(request, 'products/product_create.html', {
-        'stalls': stalls
+        'stalls': stalls,
+        'preselected_stall_id': preselected_stall_id
     })
 
 
@@ -73,7 +79,9 @@ def edit_product(request, id):
         product.stall_id = request.POST.get('stall')
 
         product.save()
-        return redirect('product_detail', id=product.id)
+
+        # 🔥 FIX: go back to stall view, not product detail
+        return redirect('product_by_stall', stall_id=product.stall.id)
 
     return render(request, 'products/edit_product.html', {
         'product': product,
@@ -84,9 +92,11 @@ def edit_product(request, id):
 # ================= DELETE PRODUCT =================
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
+    stall_id = product.stall.id
 
     if request.method == "POST":
         product.delete()
-        return redirect('product_list')
+        # 🔥 FIX: return to stall product page
+        return redirect('product_by_stall', stall_id=stall_id)
 
-    return redirect('product_detail', id=id)
+    return redirect('product_by_stall', stall_id=stall_id)

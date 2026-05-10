@@ -1,11 +1,18 @@
 {% extends "products/base.html" %}
 
-
 {% block content %}
 
 <h2>Products for {{ stall.name }}</h2>
 
-<a href="{% url 'product_list' %}">← Back</a>
+<!-- 🔥 FIX: go back to stall list instead of product_list -->
+<a href="{% url 'stall_list' %}">← Back to Stalls</a>
+
+<!-- 🔥 ADD PRODUCT BUTTON (important for your workflow) -->
+<a href="{% url 'product_create' %}?stall={{ stall.id }}" class="btn-box">
+    + Add Product
+</a>
+
+<hr>
 
 {% for p in products %}
 <div class="card">
@@ -16,7 +23,7 @@
 
     <p>{{ p.description }}</p>
 
-    <a href="{% url 'product_detail' p.id %}">View</a>
+    <a href="{% url 'product_detail' p.id %}" class="btn">View</a>
 
 </div>
 {% empty %}
