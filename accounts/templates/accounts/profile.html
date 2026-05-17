@@ -17,13 +17,78 @@
         .action-btns { display: flex; gap: 10px; }
         .approve-btn { background: #004a99; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .status-box { padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; }
+        .status-box { padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 20px; }
         .logout-btn { background: #ff4d4d; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 20px; }
+        .dashboard-link-btn { display: block; text-align: center; background: #004a99; color: white; padding: 12px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-bottom: 20px; position: relative; }
+        
+        /* 🟢 CRISP GREEN APPROVED BANNER */
+        .welcome-banner-approved { 
+            background: #d4edda; 
+            color: #155724; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-bottom: 20px; 
+            font-weight: normal; 
+            border: 1px solid #c3e6cb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 🔴 CLEAN RED REJECTED BANNER */
+        .welcome-banner-rejected { 
+            background: #f8d7da; 
+            color: #721c24; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-bottom: 20px; 
+            font-weight: normal; 
+            border: 1px solid #f5c6cb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-banner-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+        }
+
+        .welcome-banner-approved .close-banner-btn { color: #155724; }
+        .welcome-banner-approved .close-banner-btn:hover { color: #0b2e13; }
+
+        .welcome-banner-rejected .close-banner-btn { color: #721c24; }
+        .welcome-banner-rejected .close-banner-btn:hover { color: #491217; }
+
+        /*  RED NOTIFICATION BADGE STYLE */
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1.5px solid white;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+        }
     </style>
 </head>
 <body>
     <div class="topbar">
-        <h1>MMU Event System</h1>
+        <h1>MMU Pop-up Stall System</h1>
         <a href="/home/" class="btn">Home</a>
     </div>
     <div class="container">
@@ -36,53 +101,28 @@
         <div class="info"><span class="label">Email:</span> {{ user.email }}</div>
         <div class="info"><span class="label">Role:</span> <strong>{{ user.role|upper }}</strong></div>
 
-        <hr>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
-        {% if user.role == 'admin' %}
-            <h3>Pending Organizer Requests</h3>
-            {% if pending_requests %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in pending_requests %}
-                        <tr>
-                            <td>{{ req.username }}</td>
-                            <td>{{ req.email }}</td>
-                            <td class="action-btns">
-                                <form action="{% url 'approve_organizer' req.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <button type="submit" class="approve-btn">Approve</button>
-                                </form>
-                                <form action="{% url 'reject_organizer' req.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <button type="submit" class="reject-btn">Reject</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No pending requests.</p>
-            {% endif %}
+        {% if user.role == 'organizer' %}
+            <div id="organizerApprovedBanner" class="welcome-banner-approved">
+                <span>You are now an Organizer. You can create and manage events.</span>
+                <button type="button" class="close-banner-btn" onclick="dismissBanner('organizerApprovedBanner', 'approved_banner_hidden_permanently')">&times;</button>
+            </div>
+        {% endif %}
+
+        {% if user.role == 'student' and user.is_rejected %}
+            <div id="organizerRejectedBanner" class="welcome-banner-rejected">
+                <span>Your application to be an Organizer has been declined. Please contact administration for further details.</span>
+                <button type="button" class="close-banner-btn" onclick="dismissBanner('organizerRejectedBanner', 'rejected_banner_hidden_permanently')">&times;</button>
+            </div>
         {% endif %}
 
         {% if user.role == 'student' %}
-            {% if user.is_rejected %}
-                <div class="status-box" style="background: #f8d7da; color: #721c24;">
-                    Your application to be an Organizer has been declined. Please contact administration for further details.
-                </div>
-            {% elif user.is_organizer_requested %}
+            {% if user.is_organizer_requested and not user.is_rejected %}
                 <div class="status-box" style="background: #fff3cd; color: #856404;">
                     Status: Waiting for Admin Approval
                 </div>
-            {% else %}
+            {% elif not user.is_organizer_requested and not user.is_rejected %}
                 <form action="{% url 'request_organizer' %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="request-btn">Request to be Organizer</button>
@@ -90,10 +130,13 @@
             {% endif %}
         {% endif %}
 
-        {% if user.role == 'organizer' %}
-            <div style="background: #d1ecf1; padding: 15px; border-radius: 5px;">
-                You are a now an Organizer . You can create and manage events.
-            </div>
+        {% if user.role == 'admin' or user.role == 'organizer' %}
+            <a href="{% url 'pending_requests' %}" class="dashboard-link-btn">
+                View Pending Requests Dashboard
+                {% if total_pending_count > 0 %}
+                    <span class="notification-badge">{{ total_pending_count }}</span>
+                {% endif %}
+            </a>
         {% endif %}
 
         <form action="{% url 'logout' %}" method="post">
@@ -101,5 +144,27 @@
             <button type="submit" class="logout-btn">Logout</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var approvedBanner = document.getElementById("organizerApprovedBanner");
+            var rejectedBanner = document.getElementById("organizerRejectedBanner");
+
+            if (approvedBanner && localStorage.getItem("approved_banner_hidden_permanently")) {
+                approvedBanner.style.display = "none";
+            }
+            if (rejectedBanner && localStorage.getItem("rejected_banner_hidden_permanently")) {
+                rejectedBanner.style.display = "none";
+            }
+        });
+
+        function dismissBanner(bannerId, storageKey) {
+            var banner = document.getElementById(bannerId);
+            if (banner) {
+                banner.style.display = "none";
+                localStorage.setItem(storageKey, "true");
+            }
+        }
+    </script>
 </body>
 </html>

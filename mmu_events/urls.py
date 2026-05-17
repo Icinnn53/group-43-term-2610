@@ -19,6 +19,10 @@ urlpatterns = [
     path('profile/request-organizer/', account_views.request_organizer_view, name='request_organizer'),
     path('profile/approve/<int:user_id>/', account_views.approve_organizer_view, name='approve_organizer'),
     path('profile/reject/<int:user_id>/', account_views.reject_organizer_view, name='reject_organizer'),
+    path('profile/pending-requests/', account_views.pending_requests_view, name='pending_requests'),
+    path('profile/pending-requests/event/<int:event_id>/', account_views.pending_event_detail_view, name='pending_event_detail'),
+    path('profile/pending-requests/event/<int:event_id>/approve/', account_views.approve_event_view, name='approve_event'),
+    path('profile/pending-requests/event/<int:event_id>/reject/', account_views.reject_event_view, name='reject_event'),
 
     # ================= EVENTS =================
     path('home/', event_views.event_list, name='home'),

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Requests Dashboard - MMU Pop-up Stall System</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
+        .topbar { background: #004a99; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn { background: white; color: #004a99; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.2s; }
+        .btn:hover { background: #e6f0fa; }
+        
+        .container { max-width: 1100px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        /* Dashboard Tab Navigation Styling */
+        .dashboard-navigation { display: flex; gap: 15px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 5px; }
+        .nav-tab { background: none; border: none; font-size: 16px; font-weight: 600; color: #64748b; padding: 10px 20px; cursor: pointer; border-radius: 6px 6px 0 0; position: relative; transition: all 0.2s; }
+        .nav-tab:hover { color: #004a99; background: #f8fafc; }
+        .nav-tab.active { color: #004a99; }
+        .nav-tab.active::after { content: ''; position: absolute; bottom: -7px; left: 0; right: 0; height: 3px; background: #004a99; border-radius: 2px; }
+        
+        /* Table and Alert Layouts */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .alert { background: #d4edda; color: #155724; padding: 12px 18px; border-radius: 6px; margin-bottom: 25px; border-left: 5px solid #28a745; font-weight: 500; }
+        .alert-warning { background: #fff3cd; color: #856404; border-left-color: #ffc107; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tr:hover { background: #fdfdfd; }
+        
+        /* Action Button Layouts */
+        .action-btns { display: flex; gap: 8px; align-items: center; }
+        .details-btn { background: #0ea5e9; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; transition: background 0.2s; }
+        .details-btn:hover { background: #0284c7; }
+        .approve-btn { background: #10b981; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; }
+        .approve-btn:hover { background: #059669; }
+        .reject-btn { background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; }
+        .reject-btn:hover { background: #dc2626; }
+        
+        .no-data { color: #94a3b8; font-style: italic; padding: 30px text-align: center; background: #f8fafc; border-radius: 8px; border: 2px dashed #e2e8f0; margin-top: 10px; text-align: center; padding: 40px 20px; }
+        .inline-form { display: inline; margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <h1>Pending Requests</h1>
+        <a href="{% url 'profile' %}" class="btn">Back to Profile</a>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'warning' %}alert-warning{% endif %}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="dashboard-navigation">
+            {% if user.role == 'admin' %}
+                <button class="nav-tab active" onclick="switchTab('organizers-tab', this)">Organizer Requests</button>
+                <button class="nav-tab" onclick="switchTab('events-tab', this)">Event Requests</button>
+            {% endif %}
+            <button class="nav-tab {% if user.role == 'organizer' %}active{% endif %}" onclick="switchTab('stalls-tab', this)">Stall Requests</button>
+        </div>
+
+        {% if user.role == 'admin' %}
+        <div id="organizers-tab" class="tab-content active">
+            {% if pending_organizers %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in pending_organizers %}
+                        <tr>
+                            <td>{{ u.username }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <form action="{% url 'approve_organizer' u.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="approve-btn">Approve</button>
+                                    </form>
+                                    <form action="{% url 'reject_organizer' u.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="reject-btn">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">No pending organizer registration applications found.</div>
+            {% endif %}
+        </div>
+
+        <div id="events-tab" class="tab-content">
+            {% if pending_events %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Submitted By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in pending_events %}
+                        <tr>
+                            <td><strong>{{ event.title }}</strong></td>
+                            <td>{{ event.organizer.username }}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{% url 'pending_event_detail' event.id %}" class="details-btn">Details</a>
+                                    
+                                    <form action="{% url 'approve_event' event.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="approve-btn">Approve</button>
+                                    </form>
+                                    
+                                    <form action="{% url 'reject_event' event.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="reject-btn">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">No pending event verification applications found.</div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div id="stalls-tab" class="tab-content {% if user.role == 'organizer' %}active{% endif %}">
+            {% if pending_vendors %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stall Name</th>
+                            <th>Linked Event Target</th>
+                            <th>Vendor Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stall in pending_vendors %}
+                        <tr>
+                            <td><strong>{{ stall.name }}</strong></td>
+                            <td>{{ stall.event.title }}</td>
+                            <td>{{ stall.owner.user.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">No pending stall space assignments currently waiting approval.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, element) {
+            // Hide all tab container areas
+            const contentSections = document.querySelectorAll('.tab-content');
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // Remove highlighting accents from all button tab headers
+            const actionTabs = document.querySelectorAll('.nav-tab');
+            actionTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Activate the designated target tab container and target link button elements
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

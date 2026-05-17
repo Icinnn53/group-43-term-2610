@@ -39,6 +39,7 @@
             text-decoration: none;
             font-size: 14px;
             font-weight: bold;
+            position: relative;
         }
 
         .btn:hover {
@@ -48,6 +49,26 @@
         .profile-btn {
             background: #ffc107;
             color: #212529;
+        }
+
+        /*  RED NOTIFICATION BADGE STYLE */
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1.5px solid white;
+            position: absolute;
+            top: -6px;
+            right: -6px;
         }
 
         .logout-btn {
@@ -145,7 +166,6 @@
 
     <div class="nav-links">
 
-        <!-- 🔍 GLOBAL SEARCH (GOES TO STALL PAGE) -->
         <form method="GET" action="{% url 'stall_list' %}">
             <input type="text" name="q" class="search-box" placeholder="Search stalls...">
             <button type="submit" class="search-btn">🔍</button>
@@ -153,7 +173,12 @@
 
         <a href="{% url 'home' %}" class="btn">Home</a>
 
-        <a href="{% url 'profile' %}" class="btn profile-btn">Profile</a>
+        <a href="{% url 'profile' %}" class="btn profile-btn">
+            Profile
+            {% if total_pending_count > 0 %}
+                <span class="notification-badge">{{ total_pending_count }}</span>
+            {% endif %}
+        </a>
 
         <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
 
