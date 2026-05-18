@@ -31,13 +31,17 @@ urlpatterns = [
     path('home/', event_views.event_list, name='home'),
     path('dashboard/', event_views.dashboard, name='dashboard'),
 
-    path('event/create/', event_views.create_event, name='create_event'),
+    # ✅ NEW: STEP 1 (choose event type)
+    path('event/create/', event_views.create_event_select, name='create_event_select'),
+
+    # ✅ STEP 2 (actual form)
+    path('event/create/<str:event_type>/', event_views.create_event, name='create_event'),
+
     path('event/<int:event_id>/', event_views.event_detail, name='event_detail'),
     path('event/<int:event_id>/edit/', event_views.edit_event, name='edit_event'),
 
     path('event/<int:event_id>/register/', event_views.register_event, name='register_event'),
 
-    # ✅ FIX ADDED: CANCEL REGISTRATION
     path(
         'event/<int:event_id>/cancel/',
         event_views.cancel_registration,

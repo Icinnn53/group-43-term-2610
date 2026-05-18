@@ -7,7 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body { background: #f5f7fb; }
+        body {
+            background: #f5f7fb;
+        }
 
         .event-header {
             background: linear-gradient(135deg, #111827, #1f2937);
@@ -32,16 +34,25 @@
             margin-bottom: 20px;
         }
 
-        .meta { font-size: 14px; opacity: 0.85; }
+        .meta {
+            font-size: 14px;
+            opacity: 0.85;
+        }
 
-        .label { font-weight: 600; color: #374151; }
+        .label {
+            font-weight: 600;
+            color: #374151;
+        }
 
-        .divider { margin: 25px 0; }
+        .divider {
+            margin: 25px 0;
+        }
 
         .btn-area {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            align-items: center;
             margin-top: 20px;
         }
 
@@ -67,7 +78,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             background: #fafafa;
         }
 
@@ -77,6 +88,10 @@
             flex-wrap: wrap;
             align-items: center;
         }
+
+        .cancel-form {
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -84,17 +99,29 @@
 
 <div class="container mt-4">
 
+    <!-- BACK BUTTON -->
     <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm mb-3">
         ← Back
     </a>
 
-    <!-- HEADER -->
+    <!-- EVENT HEADER -->
     <div class="event-header">
-        <div class="badge-type">{{ event.get_event_type_display }}</div>
-        <h2 class="mb-1">{{ event.title }}</h2>
-        <div class="meta">{{ event.location }}</div>
+
+        <div class="badge-type">
+            {{ event.get_event_type_display }}
+        </div>
+
+        <h2 class="mb-1">
+            {{ event.title }}
+        </h2>
+
+        <div class="meta">
+            📍 {{ event.location }}
+        </div>
+
     </div>
 
+    <!-- EVENT CARD -->
     <div class="event-card">
 
         <!-- MESSAGES -->
@@ -106,21 +133,28 @@
             {% endfor %}
         {% endif %}
 
-        <!-- IMAGE -->
+        <!-- EVENT IMAGE -->
         {% if event.image %}
             <img src="{{ event.image.url }}" class="poster">
         {% else %}
-            <img src="https://via.placeholder.com/900x400?text=No+Image" class="poster">
+            <img
+                src="https://via.placeholder.com/900x400?text=No+Image"
+                class="poster"
+            >
         {% endif %}
 
         <!-- DESCRIPTION -->
         <h5 class="label">Description</h5>
-        <p>{{ event.description }}</p>
+
+        <p>
+            {{ event.description }}
+        </p>
 
         <hr class="divider">
 
-        <!-- TIME -->
+        <!-- EVENT DATE -->
         <div class="row">
+
             <div class="col-md-6">
                 <span class="label">Start</span><br>
                 {{ event.start_date|date:"d M Y, H:i" }}
@@ -130,22 +164,29 @@
                 <span class="label">End</span><br>
                 {{ event.end_date|date:"d M Y, H:i" }}
             </div>
+
         </div>
 
         <hr class="divider">
 
-        <!-- REGISTRATION -->
-        <div>
+        <!-- REGISTRATION COUNT -->
+        <div class="mb-2">
+
             <strong>Registrations:</strong>
+
             {{ event.total_registrations }}
 
             {% if event.max_registrations %}
                 / {{ event.max_registrations }}
             {% endif %}
+
         </div>
 
+        <!-- FULL BADGE -->
         {% if event.is_full %}
-            <div class="full-badge">🚫 Registration Full</div>
+            <div class="full-badge">
+                🚫 Registration Full
+            </div>
         {% endif %}
 
         <!-- OWNERS -->
@@ -154,37 +195,67 @@
         <h5 class="label">Owners</h5>
 
         {% if owners %}
+
             {% for owner in owners %}
+
                 <div class="owner-card">
-                    <strong>{{ owner.name }}</strong><br>
-                    <small>📞 {{ owner.phone }}</small><br>
-                    <small>🌐 {{ owner.social_media }}</small><br>
-                    <small>{{ owner.description }}</small>
+
+                    <strong>
+                        {{ owner.name }}
+                    </strong>
+
+                    <br>
+
+                    {% if owner.phone %}
+                        <small>📞 {{ owner.phone }}</small><br>
+                    {% endif %}
+
+                    {% if owner.social_media %}
+                        <small>🌐 {{ owner.social_media }}</small><br>
+                    {% endif %}
+
+                    {% if owner.description %}
+                        <small>{{ owner.description }}</small>
+                    {% endif %}
+
                 </div>
+
             {% endfor %}
+
         {% else %}
-            <p class="text-muted">No owners registered yet.</p>
+
+            <p class="text-muted">
+                No owners registered yet.
+            </p>
+
         {% endif %}
 
-        <!-- BUTTONS -->
+        <!-- ACTION BUTTONS -->
         <hr class="divider">
 
         <div class="btn-area">
 
+            <!-- STALLS -->
             <a href="{% url 'stall_by_event' event.id %}" class="btn btn-info">
                 View All Stalls
             </a>
 
             <!-- EVENT STATUS -->
             {% if event.end_date < now %}
-                <button class="btn btn-secondary" disabled>Event Ended</button>
 
-            {% elif event.is_full %}
-                <button class="btn btn-danger" disabled>Full</button>
+                <button class="btn btn-secondary" disabled>
+                    Event Ended
+                </button>
+
+            {% elif event.is_full and not is_registered %}
+
+                <button class="btn btn-danger" disabled>
+                    Registration Full
+                </button>
 
             {% else %}
 
-                <!-- REGISTER / CANCEL -->
+                <!-- REGISTERED -->
                 {% if is_registered %}
 
                     <div class="action-row">
@@ -193,30 +264,54 @@
                             ✔ Registered
                         </button>
 
-                        <form method="POST" action="{% url 'cancel_registration' event.id %}">
+                        <!-- IMPORTANT -->
+                        <!-- THIS MUST BE POST -->
+                        <form
+                            method="POST"
+                            action="{% url 'cancel_registration' event.id %}"
+                            class="cancel-form"
+                        >
+
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger">
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger"
+                            >
                                 Cancel Registration
                             </button>
+
                         </form>
 
                     </div>
 
+                <!-- NOT REGISTERED -->
                 {% else %}
-                    <a href="{% url 'register_event' event.id %}" class="btn btn-primary">
+
+                    <a
+                        href="{% url 'register_event' event.id %}"
+                        class="btn btn-primary"
+                    >
                         Register for Event
                     </a>
+
                 {% endif %}
 
             {% endif %}
 
-            <!-- ORGANIZER -->
+            <!-- EDIT EVENT -->
             {% if request.user == event.organizer %}
-                <a href="{% url 'edit_event' event.id %}" class="btn btn-warning">
+
+                <a
+                    href="{% url 'edit_event' event.id %}"
+                    class="btn btn-warning"
+                >
                     Edit Event
                 </a>
+
             {% endif %}
 
+            <!-- HOME -->
             <a href="{% url 'home' %}" class="btn btn-light border">
                 All Events
             </a>

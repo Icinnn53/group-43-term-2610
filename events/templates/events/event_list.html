@@ -185,7 +185,7 @@
         <a href="{% url 'stall_list' %}" class="btn">Stalls</a>
 
         {% if user.role == 'organizer' or user.role == 'admin' %}
-            <a href="{% url 'create_event' %}" class="btn">+ Create Event</a>
+            <a href="{% url 'create_event_select' %}" class="btn">+ Create Event</a>
         {% endif %}
     </div>
 </div>
