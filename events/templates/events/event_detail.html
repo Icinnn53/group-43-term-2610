@@ -54,23 +54,6 @@
             display: inline-block;
         }
 
-        .fee-box {
-            background: #f1f5f9;
-            padding: 10px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .vendor-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #fafafa;
-        }
-
         .full-badge {
             background: #dc3545;
             color: white;
@@ -78,6 +61,21 @@
             border-radius: 8px;
             display: inline-block;
             margin-top: 10px;
+        }
+
+        .owner-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
     </style>
 </head>
@@ -97,7 +95,6 @@
         <div class="meta">{{ event.location }}</div>
     </div>
 
-    <!-- CARD -->
     <div class="event-card">
 
         <!-- MESSAGES -->
@@ -135,17 +132,10 @@
             </div>
         </div>
 
-        <!-- FEE -->
-        {% if event.has_registration_fee %}
-            <div class="fee-box">
-                💰 RM {{ event.registration_fee }}
-            </div>
-        {% endif %}
-
-        <!-- REGISTRATION STATUS -->
         <hr class="divider">
 
-        <div class="mb-2">
+        <!-- REGISTRATION -->
+        <div>
             <strong>Registrations:</strong>
             {{ event.total_registrations }}
 
@@ -155,9 +145,7 @@
         </div>
 
         {% if event.is_full %}
-            <div class="full-badge">
-                🚫 Registration Full
-            </div>
+            <div class="full-badge">🚫 Registration Full</div>
         {% endif %}
 
         <!-- OWNERS -->
@@ -167,11 +155,11 @@
 
         {% if owners %}
             {% for owner in owners %}
-                <div class="vendor-card">
+                <div class="owner-card">
                     <strong>{{ owner.name }}</strong><br>
-                    <small><b>Phone:</b> {{ owner.phone }}</small><br>
-                    <small><b>Social:</b> {{ owner.social_media }}</small><br>
-                    <small><b>Description:</b> {{ owner.description }}</small>
+                    <small>📞 {{ owner.phone }}</small><br>
+                    <small>🌐 {{ owner.social_media }}</small><br>
+                    <small>{{ owner.description }}</small>
                 </div>
             {% endfor %}
         {% else %}
@@ -187,21 +175,42 @@
                 View All Stalls
             </a>
 
+            <!-- EVENT STATUS -->
             {% if event.end_date < now %}
                 <button class="btn btn-secondary" disabled>Event Ended</button>
 
             {% elif event.is_full %}
-                <button class="btn btn-danger" disabled>Registration Full</button>
-
-            {% elif is_registered %}
-                <button class="btn btn-success" disabled>✔ Already Registered</button>
+                <button class="btn btn-danger" disabled>Full</button>
 
             {% else %}
-                <a href="{% url 'register_event' event.id %}" class="btn btn-primary">
-                    Register for Event
-                </a>
+
+                <!-- REGISTER / CANCEL -->
+                {% if is_registered %}
+
+                    <div class="action-row">
+
+                        <button class="btn btn-success" disabled>
+                            ✔ Registered
+                        </button>
+
+                        <form method="POST" action="{% url 'cancel_registration' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger">
+                                Cancel Registration
+                            </button>
+                        </form>
+
+                    </div>
+
+                {% else %}
+                    <a href="{% url 'register_event' event.id %}" class="btn btn-primary">
+                        Register for Event
+                    </a>
+                {% endif %}
+
             {% endif %}
 
+            <!-- ORGANIZER -->
             {% if request.user == event.organizer %}
                 <a href="{% url 'edit_event' event.id %}" class="btn btn-warning">
                     Edit Event

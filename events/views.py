@@ -11,7 +11,7 @@ from .forms import (
     BazaarRegistrationForm
 )
 
-from owner.models import Owner, Stall   # ✅ FIXED IMPORT PATH (IMPORTANT)
+from owner.models import Owner, Stall
 
 
 # =========================================================
@@ -28,9 +28,7 @@ def event_list(request):
     for event in events:
         if not event.start_date or not event.end_date:
             ongoing.append(event)
-            continue
-
-        if event.end_date < now:
+        elif event.end_date < now:
             past.append(event)
         elif event.start_date > now:
             future.append(event)
@@ -45,7 +43,7 @@ def event_list(request):
 
 
 # =========================================================
-# EVENT DETAIL (🔥 FIXED OWNERS DISPLAY)
+# EVENT DETAIL (FIXED OWNERS)
 # =========================================================
 @login_required
 def event_detail(request, event_id):
@@ -64,19 +62,19 @@ def event_detail(request, event_id):
         event=event
     ).exists()
 
-    # 🔥 FIX: owners come from Stall table, NOT EventRegistration
+    # FIX: owners come from Stall relationship
     owners = Owner.objects.filter(stalls__event=event).distinct()
 
     return render(request, 'events/event_detail.html', {
         'event': event,
         'is_registered': is_registered,
-        'owners': owners,   # 🔥 THIS FIXES YOUR "NO OWNERS" PROBLEM
+        'owners': owners,
         'now': timezone.now(),
     })
 
 
 # =========================================================
-# REGISTER EVENT (🔥 AUTO CREATE OWNER + STALL)
+# REGISTER EVENT (AUTO OWNER + STALL FIXED)
 # =========================================================
 @login_required
 def register_event(request, event_id):
@@ -112,22 +110,20 @@ def register_event(request, event_id):
 
     if request.method == "POST" and form.is_valid():
 
-        # 1. create registration
+        # 1. Create registration
         EventRegistration.objects.create(
             user=request.user,
             event=event,
             data=form.cleaned_data
         )
 
-        # 2. create owner linked to user
+        # 2. Create owner
         owner, _ = Owner.objects.get_or_create(
             user=request.user,
-            defaults={
-                "name": request.user.username
-            }
+            defaults={"name": request.user.username}
         )
 
-        # 3. create stall linked to event
+        # 3. Create stall (safe linked system)
         Stall.objects.get_or_create(
             event=event,
             owner=owner,
@@ -149,7 +145,34 @@ def register_event(request, event_id):
 
 
 # =========================================================
-# OTHER VIEWS (UNCHANGED CLEANED)
+# CANCEL REGISTRATION (ADDED FEATURE)
+# =========================================================
+@login_required
+def cancel_registration(request, event_id):
+
+    event = get_object_or_404(Event, id=event_id)
+
+    registration = EventRegistration.objects.filter(
+        user=request.user,
+        event=event
+    ).first()
+
+    if not registration:
+        messages.error(request, "You are not registered for this event.")
+        return redirect('event_detail', event_id=event_id)
+
+    if request.method == "POST":
+        registration.delete()
+        messages.success(request, "Registration cancelled successfully.")
+        return redirect('event_detail', event_id=event_id)
+
+    return render(request, 'events/cancel_registration.html', {
+        'event': event
+    })
+
+
+# =========================================================
+# EDIT EVENT
 # =========================================================
 @login_required
 def edit_event(request, event_id):
@@ -176,6 +199,9 @@ def edit_event(request, event_id):
     })
 
 
+# =========================================================
+# DASHBOARD
+# =========================================================
 @login_required
 def dashboard(request):
 
@@ -188,6 +214,9 @@ def dashboard(request):
     })
 
 
+# =========================================================
+# CREATE EVENT
+# =========================================================
 @login_required
 def create_event(request):
 
