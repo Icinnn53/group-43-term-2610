@@ -6,20 +6,31 @@
 
 <div class="card" style="max-width:500px; margin:auto; padding:20px;">
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- STALL NAME -->
+        {% if stall.stall_image %}
+            <div class="mb-3">
+                <label>Current Image</label><br>
+                <img src="{{ stall.stall_image.url }}"
+                     alt="{{ stall.name }}"
+                     style="max-width:200px; border-radius:10px;">
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label>Change Stall Picture</label>
+            <input type="file" name="stall_image" accept="image/*">
+        </div>
+
         <div class="mb-3">
             <label>Stall Name</label>
             <input type="text" name="name" value="{{ stall.name }}" required>
         </div>
 
-        <!-- EVENT (OPTIONAL) -->
         <div class="mb-3">
             <label>Event</label>
             <select name="event_id">
-
                 <option value="">- No Event (Rental Stall)</option>
 
                 {% for event in events %}
@@ -28,7 +39,6 @@
                         {{ event.title }}
                     </option>
                 {% endfor %}
-
             </select>
 
             <small style="color:#9aa4b2;">
@@ -36,28 +46,46 @@
             </small>
         </div>
 
-        <!-- LOCATION -->
         <div class="mb-3">
             <label>Location</label>
             <input type="text" name="location" value="{{ stall.location }}">
         </div>
 
-        <!-- DESCRIPTION -->
         <div class="mb-3">
             <label>Description</label>
             <textarea name="description">{{ stall.description }}</textarea>
         </div>
 
-        <!-- CAPACITY -->
         <div class="mb-3">
             <label>Capacity</label>
             <input type="number" name="capacity" value="{{ stall.capacity }}">
         </div>
 
-        <!-- RENTAL FEE -->
         <div class="mb-3">
             <label>Rental Fee</label>
             <input type="number" step="0.01" name="rental_fee" value="{{ stall.rental_fee }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Rental Start Date</label>
+            <input type="date"
+                   name="rental_start_date"
+                   value="{{ stall.rental_start_date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Rental End Date</label>
+            <input type="date"
+                   name="rental_end_date"
+                   value="{{ stall.rental_end_date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="mb-3">
+            <label>
+                <input type="checkbox" name="is_active"
+                       {% if stall.is_active %}checked{% endif %}>
+                Active Stall
+            </label>
         </div>
 
         <button type="submit" class="btn" style="width:100%; margin-top:10px;">

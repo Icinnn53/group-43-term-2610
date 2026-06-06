@@ -11,7 +11,23 @@
 {% for s in stalls %}
 <div class="card">
 
+    {% if s.stall_image %}
+        <img src="{{ s.stall_image.url }}"
+             alt="{{ s.name }}"
+             style="width:140px; height:100px; object-fit:cover; border-radius:10px; margin-bottom:10px;">
+    {% else %}
+        <div style="width:140px; height:100px; background:#eef0f3; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#777; margin-bottom:10px;">
+            No Image
+        </div>
+    {% endif %}
+
     <h3>{{ s.name }}</h3>
+
+    {% if s.is_active %}
+        <p><b>Status:</b> <span style="color:green;">Active</span></p>
+    {% else %}
+        <p><b>Status:</b> <span style="color:red;">Inactive</span></p>
+    {% endif %}
 
     <p><b>Owner:</b>
         {% if s.owner %}
@@ -29,15 +45,12 @@
         {% endif %}
     </p>
 
-    <p><b>Event:</b>
-        {% if s.event %}
-            {{ s.event.title }}
-        {% else %}
-            Rental Stall (No Event)
-        {% endif %}
-    </p>
+    <p><b>Event:</b> {{ event.title }}</p>
 
-    <p>{{ s.description }}</p>
+    <p><b>Description:</b> {{ s.description }}</p>
+
+    <a href="{% url 'stall_detail' s.id %}" class="btn">View</a>
+    <a href="{% url 'stall_edit' s.id %}" class="btn">Edit</a>
 
 </div>
 

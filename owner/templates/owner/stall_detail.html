@@ -6,6 +6,21 @@
 
 <div class="card">
 
+    {% if stall.stall_image %}
+        <img src="{{ stall.stall_image.url }}"
+             alt="{{ stall.name }}"
+             style="
+                width:100%;
+                max-width:500px;
+                max-height:300px;
+                object-fit:cover;
+                border-radius:12px;
+                margin-bottom:20px;
+             ">
+    {% else %}
+        <p style="color:#9aa4b2;">No stall image uploaded.</p>
+    {% endif %}
+
     <p><b>Owner:</b> {{ stall.owner.name }}</p>
     <p><b>Phone:</b> {{ stall.owner.phone }}</p>
 
@@ -13,6 +28,25 @@
         <p><b>Event:</b> {{ stall.event.title }}</p>
     {% else %}
         <p><b>Event:</b> Rental Stall (No Event)</p>
+
+        <p>
+            <b>Rental Period:</b>
+            {{ stall.rental_start_date|default:"-" }}
+            →
+            {{ stall.rental_end_date|default:"-" }}
+        </p>
+    {% endif %}
+
+    {% if stall.is_active %}
+        <p>
+            <b>Status:</b>
+            <span style="color:green;">Active</span>
+        </p>
+    {% else %}
+        <p>
+            <b>Status:</b>
+            <span style="color:red;">Inactive</span>
+        </p>
     {% endif %}
 
     <p><b>Description:</b> {{ stall.description }}</p>
@@ -20,7 +54,9 @@
     <p><b>Capacity:</b> {{ stall.capacity }}</p>
     <p><b>Fee:</b> RM {{ stall.rental_fee }}</p>
 
-    <a href="{% url 'stall_edit' stall.id %}" class="btn">Edit</a>
+    <a href="{% url 'stall_edit' stall.id %}" class="btn">
+        Edit
+    </a>
 
     <a href="{% url 'stall_delete' stall.id %}" class="btn btn-danger">
         Delete

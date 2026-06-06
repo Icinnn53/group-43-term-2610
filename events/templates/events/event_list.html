@@ -166,10 +166,16 @@
 
     <div class="nav-links">
 
-        <form method="GET" action="{% url 'stall_list' %}">
-            <input type="text" name="q" class="search-box" placeholder="Search stalls...">
-            <button type="submit" class="search-btn">🔍</button>
-        </form>
+       <form method="GET" action="{% url 'stall_list' %}">
+    <input
+        type="text"
+        name="q"
+        class="search-box"
+        placeholder="Search stall, owner, event..."
+        value="{{ request.GET.q }}"
+    >
+    <button type="submit" class="search-btn">🔍</button>
+</form>
 
         <a href="{% url 'home' %}" class="btn">Home</a>
 

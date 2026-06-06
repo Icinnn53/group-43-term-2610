@@ -13,7 +13,7 @@
         </div>
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="mb-3">
@@ -34,25 +34,49 @@
         </div>
 
         <div class="mb-3">
+            <label>Product Image</label>
+            <input type="file"
+                   name="product_image"
+                   class="form-control"
+                   accept="image/*">
+        </div>
+
+        <div class="mb-3">
             <label>Name</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text"
+                   name="name"
+                   class="form-control"
+                   required>
         </div>
 
         <div class="mb-3">
             <label>Description</label>
-            <textarea name="description" class="form-control"></textarea>
+            <textarea name="description"
+                      class="form-control"></textarea>
         </div>
 
         <div class="mb-3">
             <label>Price</label>
-            <input type="number" name="price" class="form-control" required>
+            <input type="number"
+                   name="price"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label>Stock Quantity</label>
+            <input type="number"
+                   name="stock_quantity"
+                   class="form-control"
+                   value="0"
+                   min="0"
+                   required>
         </div>
 
         <button type="submit" class="btn btn-primary">
             Create
         </button>
 
-        <!-- 🔥 FIXED BACK BUTTON -->
         <a href="{% url 'stall_list' %}" class="btn btn-secondary">
             Back to Stalls
         </a>

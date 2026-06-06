@@ -4,18 +4,39 @@
 
 <h1 class="title">Stall List</h1>
 
-<!-- 🔍 SEARCH BAR -->
 <form method="GET" style="margin: 15px 0;">
-    <input type="text" name="q" placeholder="Search stalls..." 
-           value="{{ request.GET.q }}" 
+
+    <input type="text"
+           name="q"
+           placeholder="Search stall, owner, event..."
+           value="{{ request.GET.q }}"
            style="padding:8px; width:250px;">
 
-    <button type="submit" class="btn">Search</button>
+    <select name="status" style="padding:8px;">
+        <option value="">All Status</option>
+
+        <option value="active"
+            {% if status == "active" %}selected{% endif %}>
+            Active
+        </option>
+
+        <option value="inactive"
+            {% if status == "inactive" %}selected{% endif %}>
+            Inactive
+        </option>
+    </select>
+
+    <button type="submit" class="btn">
+        Search
+    </button>
+
 </form>
 
-<!-- ✅ SHOW WHAT USER SEARCH -->
 {% if request.GET.q %}
-    <p>Showing results for: "<b>{{ request.GET.q }}</b>"</p>
+    <p>
+        Showing results for:
+        "<b>{{ request.GET.q }}</b>"
+    </p>
 {% endif %}
 
 <a href="{% url 'stall_create' %}" class="btn btn-success">
@@ -24,72 +45,178 @@
 
 <hr>
 
-<!-- ===================== EVENT STALLS ===================== -->
 <h2>Event Stalls</h2>
 
 {% for s in stalls %}
-    {% if s.event %}
+{% if s.event %}
 
 <div class="card">
 
+    {% if s.stall_image %}
+        <img src="{{ s.stall_image.url }}"
+             alt="{{ s.name }}"
+             style="
+                width:140px;
+                height:100px;
+                object-fit:cover;
+                border-radius:10px;
+                margin-bottom:10px;
+             ">
+    {% else %}
+        <div style="
+            width:140px;
+            height:100px;
+            background:#eef0f3;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#777;
+            margin-bottom:10px;
+        ">
+            No Image
+        </div>
+    {% endif %}
+
     <h3>{{ s.name }}</h3>
+
     <p>{{ s.location }}</p>
 
     <p>
-        <b>Event:</b> {{ s.event.title }}
+        <b>Owner:</b>
+        {{ s.owner.name }}
     </p>
 
-    <a href="{% url 'stall_detail' s.id %}" class="btn">View</a>
+    <p>
+        <b>Event:</b>
+        {{ s.event.title }}
+    </p>
 
-    <a href="{% url 'stall_edit' s.id %}" class="btn">Edit</a>
+    {% if s.is_active %}
+        <p>
+            <b>Status:</b>
+            <span style="color:green;">Active</span>
+        </p>
+    {% else %}
+        <p>
+            <b>Status:</b>
+            <span style="color:red;">Inactive</span>
+        </p>
+    {% endif %}
+
+    <a href="{% url 'stall_detail' s.id %}" class="btn">
+        View
+    </a>
+
+    <a href="{% url 'stall_edit' s.id %}" class="btn">
+        Edit
+    </a>
 
     <a href="{% url 'stall_delete' s.id %}" class="btn btn-danger">
         Delete
     </a>
 
-    <a href="{% url 'product_by_stall' s.id %}" class="btn btn-success" style="margin-top:5px;">
+    <a href="{% url 'product_by_stall' s.id %}"
+       class="btn btn-success"
+       style="margin-top:5px;">
         View Products
     </a>
 
 </div>
 
-    {% endif %}
+{% endif %}
 {% empty %}
 <p>No stalls available.</p>
 {% endfor %}
 
 <hr>
 
-<!-- ===================== RENTAL STALLS ===================== -->
 <h2>Rental Stalls</h2>
 
 {% for s in stalls %}
-    {% if not s.event %}
+{% if not s.event %}
 
 <div class="card">
 
+    {% if s.stall_image %}
+        <img src="{{ s.stall_image.url }}"
+             alt="{{ s.name }}"
+             style="
+                width:140px;
+                height:100px;
+                object-fit:cover;
+                border-radius:10px;
+                margin-bottom:10px;
+             ">
+    {% else %}
+        <div style="
+            width:140px;
+            height:100px;
+            background:#eef0f3;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#777;
+            margin-bottom:10px;
+        ">
+            No Image
+        </div>
+    {% endif %}
+
     <h3>{{ s.name }}</h3>
+
     <p>{{ s.location }}</p>
 
     <p style="color:#9aa4b2;">
         Rental Stall (No Event)
     </p>
 
-    <a href="{% url 'stall_detail' s.id %}" class="btn">View</a>
+    <p>
+        <b>Owner:</b>
+        {{ s.owner.name }}
+    </p>
 
-    <a href="{% url 'stall_edit' s.id %}" class="btn">Edit</a>
+    <p>
+        <b>Rental Period:</b>
+        {{ s.rental_start_date|default:"-" }}
+        →
+        {{ s.rental_end_date|default:"-" }}
+    </p>
+
+    {% if s.is_active %}
+        <p>
+            <b>Status:</b>
+            <span style="color:green;">Active</span>
+        </p>
+    {% else %}
+        <p>
+            <b>Status:</b>
+            <span style="color:red;">Inactive</span>
+        </p>
+    {% endif %}
+
+    <a href="{% url 'stall_detail' s.id %}" class="btn">
+        View
+    </a>
+
+    <a href="{% url 'stall_edit' s.id %}" class="btn">
+        Edit
+    </a>
 
     <a href="{% url 'stall_delete' s.id %}" class="btn btn-danger">
         Delete
     </a>
 
-    <a href="{% url 'product_by_stall' s.id %}" class="btn btn-success" style="margin-top:5px;">
+    <a href="{% url 'product_by_stall' s.id %}"
+       class="btn btn-success"
+       style="margin-top:5px;">
         View Products
     </a>
 
 </div>
 
-    {% endif %}
+{% endif %}
 {% empty %}
 <p>No rental stalls.</p>
 {% endfor %}

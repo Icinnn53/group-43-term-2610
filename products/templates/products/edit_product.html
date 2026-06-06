@@ -4,25 +4,70 @@
 
 <h2>Edit Product</h2>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <select name="stall">
-        {% for s in stalls %}
-            <option value="{{ s.id }}"
-                {% if product.stall.id == s.id %}selected{% endif %}>
-                {{ s.name }}
-            </option>
-        {% endfor %}
-    </select>
+    {% if product.product_image %}
+        <div style="margin-bottom:15px;">
+            <label>Current Product Image</label><br>
+            <img src="{{ product.product_image.url }}"
+                 alt="{{ product.name }}"
+                 style="max-width:200px; border-radius:10px;">
+        </div>
+    {% endif %}
 
-    <input type="text" name="name" value="{{ product.name }}">
+    <div style="margin-bottom:15px;">
+        <label>Change Product Image</label><br>
+        <input type="file" name="product_image" accept="image/*">
+    </div>
 
-    <input type="text" name="price" value="{{ product.price }}">
+    <div>
+        <label>Stall</label><br>
+        <select name="stall">
+            {% for s in stalls %}
+                <option value="{{ s.id }}"
+                    {% if product.stall.id == s.id %}selected{% endif %}>
+                    {{ s.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <textarea name="description">{{ product.description }}</textarea>
+    <br>
+
+    <div>
+        <label>Product Name</label><br>
+        <input type="text" name="name" value="{{ product.name }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label>Price</label><br>
+        <input type="text" name="price" value="{{ product.price }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label>Stock Quantity</label><br>
+        <input type="number"
+               name="stock_quantity"
+               value="{{ product.stock_quantity }}"
+               min="0">
+    </div>
+
+    <br>
+
+    <div>
+        <label>Description</label><br>
+        <textarea name="description">{{ product.description }}</textarea>
+    </div>
+
+    <br>
 
     <button type="submit">Save</button>
+
 </form>
 
 {% endblock %}

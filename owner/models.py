@@ -40,8 +40,8 @@ class Stall(models.Model):
         Owner,
         on_delete=models.CASCADE,
         related_name="stalls",
-        null=True,      
-        blank=True  
+        null=True,
+        blank=True
     )
 
     name = models.CharField(max_length=100)
@@ -56,7 +56,20 @@ class Stall(models.Model):
         default=0
     )
 
+    # ✅ STALL IMAGE
+    stall_image = models.ImageField(
+        upload_to="stall_images/",
+        blank=True,
+        null=True
+    )
+
+    # ✅ RENTAL DATE
+    rental_start_date = models.DateField(blank=True, null=True)
+    rental_end_date = models.DateField(blank=True, null=True)
+
+    # ✅ ACTIVE / INACTIVE
     is_active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

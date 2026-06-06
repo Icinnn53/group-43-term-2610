@@ -33,10 +33,11 @@ def owner_edit(request, id):
 
 
 # =========================================================
-# STALL (🔥 SEARCH FIXED HERE)
+# STALL
 # =========================================================
 def stall_list(request):
     query = request.GET.get('q')
+    status = request.GET.get('status')
 
     stalls = Stall.objects.select_related('owner', 'event').all()
 
@@ -45,12 +46,18 @@ def stall_list(request):
             Q(name__icontains=query) |
             Q(location__icontains=query) |
             Q(owner__name__icontains=query) |
-            Q(event__title__icontains=query)   # ✅ FIXED LINE
+            Q(event__title__icontains=query)
         )
+
+    if status == "active":
+        stalls = stalls.filter(is_active=True)
+    elif status == "inactive":
+        stalls = stalls.filter(is_active=False)
 
     return render(request, 'owner/stall_list.html', {
         'stalls': stalls,
-        'query': query   # optional (for showing search text)
+        'query': query,
+        'status': status
     })
 
 
@@ -81,7 +88,11 @@ def stall_create(request):
             location=request.POST.get('location'),
             capacity=int(request.POST.get('capacity') or 1),
             rental_fee=float(request.POST.get('rental_fee') or 0),
-            is_active=True
+            stall_image=request.FILES.get('stall_image'),
+
+            rental_start_date=request.POST.get('rental_start_date') or None,
+            rental_end_date=request.POST.get('rental_end_date') or None,
+            is_active=True if request.POST.get('is_active') == 'on' else False,
         )
 
         return redirect('stall_list')
@@ -112,6 +123,14 @@ def stall_edit(request, id):
         stall.location = request.POST.get('location')
         stall.capacity = int(request.POST.get('capacity') or 1)
         stall.rental_fee = float(request.POST.get('rental_fee') or 0)
+
+        stall.rental_start_date = request.POST.get('rental_start_date') or None
+        stall.rental_end_date = request.POST.get('rental_end_date') or None
+        stall.is_active = True if request.POST.get('is_active') == 'on' else False
+
+        if request.FILES.get('stall_image'):
+            stall.stall_image = request.FILES.get('stall_image')
+
         stall.save()
 
         return redirect('stall_detail', id=stall.id)

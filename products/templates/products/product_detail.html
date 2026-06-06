@@ -6,11 +6,42 @@
 
 <div class="card">
 
+    {% if product.product_image %}
+        <img src="{{ product.product_image.url }}"
+             alt="{{ product.name }}"
+             style="
+                width:100%;
+                max-width:400px;
+                max-height:300px;
+                object-fit:cover;
+                border-radius:12px;
+                margin-bottom:20px;
+             ">
+    {% else %}
+        <p style="color:#9aa4b2;">
+            No product image uploaded.
+        </p>
+    {% endif %}
+
     <h2>{{ product.name }}</h2>
 
     <p>{{ product.description }}</p>
 
     <h3>RM {{ product.price }}</h3>
+
+    <p><b>Stock Quantity:</b> {{ product.stock_quantity }}</p>
+
+    {% if product.stock_quantity > 0 %}
+        <p>
+            <b>Status:</b>
+            <span style="color:green;">In Stock</span>
+        </p>
+    {% else %}
+        <p>
+            <b>Status:</b>
+            <span style="color:red;">Sold Out</span>
+        </p>
+    {% endif %}
 
     <p><b>Stall:</b> {{ product.stall.name }}</p>
 
@@ -20,7 +51,9 @@
 
     <hr>
 
-    <a href="{% url 'edit_product' product.id %}">Edit</a>
+    <a href="{% url 'edit_product' product.id %}">
+        Edit
+    </a>
 
     <form method="POST" action="{% url 'delete_product' product.id %}">
         {% csrf_token %}
