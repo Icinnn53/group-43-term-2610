@@ -2,13 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
-from django.db.models import Q   # ✅ ADDED
+from django.db.models import Q
+from django import forms
 
 from .models import Event, EventRegistration
 from .forms import (
     EventForm,
     ConcertRegistrationForm,
-    TournamentRegistrationForm,
     BazaarRegistrationForm
 )
 
@@ -16,22 +16,20 @@ from owner.models import Owner, Stall
 
 
 # =========================================================
-# EVENT LIST (✅ SEARCH ADDED HERE ONLY)
+# EVENT LIST
 # =========================================================
 @login_required
 def event_list(request):
 
     now = timezone.now()
-    query = request.GET.get('q')   # ✅ ADDED
+    query = request.GET.get('q')
 
     events = Event.objects.all()
 
-    # ✅ SEARCH LOGIC (ONLY ADDITION)
     if query:
         events = events.filter(
             Q(title__icontains=query) |
-            Q(location__icontains=query) |
-            Q(stall__name__icontains=query)
+            Q(location__icontains=query)
         ).distinct()
 
     ongoing, future, past = [], [], []
@@ -39,9 +37,7 @@ def event_list(request):
     for event in events:
         if not event.start_date or not event.end_date:
             ongoing.append(event)
-            continue
-
-        if event.end_date < now:
+        elif event.end_date < now:
             past.append(event)
         elif event.start_date > now:
             future.append(event)
@@ -52,7 +48,7 @@ def event_list(request):
         'ongoing': ongoing,
         'future': future,
         'past': past,
-        'query': query   # ✅ optional
+        'query': query
     })
 
 
@@ -111,15 +107,38 @@ def register_event(request, event_id):
         messages.warning(request, "You are already registered for this event.")
         return redirect('event_detail', event_id=event_id)
 
-    form_map = {
-        'concert': ConcertRegistrationForm,
-        'tournament': TournamentRegistrationForm,
-        'bazaar': BazaarRegistrationForm,
-    }
+    # =====================================================
+    # TOURNAMENT (DYNAMIC FORM)
+    # =====================================================
+    if event.event_type == "tournament":
 
-    form = form_map.get(event.event_type, ConcertRegistrationForm)(
-        request.POST or None
-    )
+        class DynamicTournamentForm(forms.Form):
+            full_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+            email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+            phone_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+
+                team_size = getattr(event, "team_size", 0) or 0
+
+                for i in range(1, team_size + 1):
+                    self.fields[f'player_{i}'] = forms.CharField(
+                        label=f'Player {i}',
+                        widget=forms.TextInput(attrs={'class': 'form-control'}),
+                        required=True
+                    )
+
+        form = DynamicTournamentForm(request.POST or None)
+
+    else:
+        form_map = {
+            'concert': ConcertRegistrationForm,
+            'bazaar': BazaarRegistrationForm,
+        }
+
+        form_class = form_map.get(event.event_type, ConcertRegistrationForm)
+        form = form_class(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
 
@@ -131,9 +150,7 @@ def register_event(request, event_id):
 
         owner, _ = Owner.objects.get_or_create(
             user=request.user,
-            defaults={
-                "name": request.user.username
-            }
+            defaults={"name": request.user.username}
         )
 
         Stall.objects.get_or_create(
@@ -154,6 +171,37 @@ def register_event(request, event_id):
         'form': form,
         'event': event,
     })
+
+
+# =========================================================
+# CANCEL REGISTRATION
+# =========================================================
+@login_required
+def cancel_registration(request, event_id):
+
+    event = get_object_or_404(Event, id=event_id)
+
+    registration = EventRegistration.objects.filter(
+        user=request.user,
+        event=event
+    ).first()
+
+    if not registration:
+        messages.error(request, "You are not registered for this event.")
+        return redirect('event_detail', event_id=event_id)
+
+    if request.method == "POST":
+        registration.delete()
+
+        Stall.objects.filter(
+            event=event,
+            owner__user=request.user
+        ).delete()
+
+        messages.success(request, "Registration cancelled successfully.")
+        return redirect('event_detail', event_id=event_id)
+
+    return redirect('event_detail', event_id=event_id)
 
 
 # =========================================================
@@ -200,10 +248,32 @@ def dashboard(request):
 
 
 # =========================================================
-# CREATE EVENT
+# STEP 1: SELECT EVENT TYPE
 # =========================================================
 @login_required
-def create_event(request):
+def create_event_select(request):
+
+    if getattr(request.user, 'role', None) not in ['organizer', 'admin']:
+        messages.error(request, "Access denied.")
+        return redirect('home')
+
+    if request.method == "POST":
+        event_type = request.POST.get("event_type")
+
+        if not event_type:
+            messages.error(request, "Please select an event type.")
+            return redirect('create_event_select')
+
+        return redirect('create_event', event_type=event_type)
+
+    return render(request, 'events/create_event_select.html')
+
+
+# =========================================================
+# STEP 2: CREATE EVENT FORM (FIXED)
+# =========================================================
+@login_required
+def create_event(request, event_type):
 
     if getattr(request.user, 'role', None) not in ['organizer', 'admin']:
         messages.error(request, "Access denied.")
@@ -211,15 +281,26 @@ def create_event(request):
 
     form = EventForm(request.POST or None, request.FILES or None)
 
+    # IMPORTANT: ALWAYS PASS event_type SAFE
+    event_type = event_type or request.POST.get("event_type")
+
     if request.method == 'POST' and form.is_valid():
+
         event = form.save(commit=False)
         event.organizer = request.user
         event.status = 'pending'
+        event.event_type = event_type
+
+        # SAVE TEAM SIZE ONLY FOR TOURNAMENT
+        if event_type == "tournament":
+            event.team_size = int(request.POST.get("team_size", 0))
+
         event.save()
 
         messages.success(request, "Event created successfully.")
         return redirect('home')
 
     return render(request, 'events/create_event.html', {
-        'form': form
+        'form': form,
+        'event_type': event_type
     })

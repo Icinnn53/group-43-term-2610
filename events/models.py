@@ -64,13 +64,19 @@ class Event(models.Model):
         blank=True
     )
 
-    # 🔥 OPTION B FIX (YOU WANTED THIS)
     has_registration_fee = models.BooleanField(default=False)
 
     registration_fee = models.DecimalField(
         max_digits=8,
         decimal_places=2,
         default=0.00
+    )
+
+    # 🔥 NEW FEATURE: ONLY FOR TOURNAMENTS
+    team_size = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Only used for tournament events (number of players per team)"
     )
 
     # ------------------------
@@ -94,7 +100,7 @@ class Event(models.Model):
 
 
 # =========================================================
-# EVENT REGISTRATION (OWNER SYSTEM REPLACEMENT)
+# EVENT REGISTRATION
 # =========================================================
 class EventRegistration(models.Model):
 
