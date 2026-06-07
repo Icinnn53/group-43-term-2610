@@ -4,9 +4,11 @@
 
 <h2>Product List</h2>
 
+{% if user.role == "organizer" %}
 <a href="{% url 'product_create' %}">
     + Add Product
 </a>
+{% endif %}
 
 {% for p in products %}
 <div class="card">
@@ -63,9 +65,11 @@
         View
     </a>
 
-    <a href="{% url 'edit_product' p.id %}">
-        Edit
-    </a>
+    {% if user.role == "organizer" or p.stall.owner.user == user %}
+        <a href="{% url 'edit_product' p.id %}">
+            Edit
+        </a>
+    {% endif %}
 
 </div>
 

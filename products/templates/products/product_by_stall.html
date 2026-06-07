@@ -8,9 +8,11 @@
     ← Back to Stalls
 </a>
 
-<a href="{% url 'product_create' %}?stall={{ stall.id }}" class="btn-box">
-    + Add Product
-</a>
+{% if user.role == "organizer" or stall.owner.user == user %}
+    <a href="{% url 'product_create' %}?stall={{ stall.id }}" class="btn-box">
+        + Add Product
+    </a>
+{% endif %}
 
 <hr>
 
@@ -61,9 +63,11 @@
         View
     </a>
 
-    <a href="{% url 'edit_product' p.id %}" class="btn">
-        Edit
-    </a>
+    {% if user.role == "organizer" or stall.owner.user == user %}
+        <a href="{% url 'edit_product' p.id %}" class="btn">
+            Edit
+        </a>
+    {% endif %}
 
 </div>
 

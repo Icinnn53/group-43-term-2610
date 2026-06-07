@@ -80,19 +80,13 @@
                    value="{{ stall.rental_end_date|date:'Y-m-d' }}">
         </div>
 
-        <div class="mb-3">
-            <label>
-                <input type="checkbox" name="is_active"
-                       {% if stall.is_active %}checked{% endif %}>
-                Active Stall
-            </label>
-        </div>
-
         <button type="submit" class="btn" style="width:100%; margin-top:10px;">
             Save Changes
         </button>
 
-        <a href="{% url 'stall_list' %}" class="btn" style="display:block; text-align:center; margin-top:10px;">
+        <a href="{% url 'stall_list' %}"
+           class="btn"
+           style="display:block; text-align:center; margin-top:10px;">
             Cancel
         </a>
 

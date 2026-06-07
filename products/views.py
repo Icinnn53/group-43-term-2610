@@ -1,6 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Product
 from owner.models import Stall
+
+
+def is_organizer(user):
+    return getattr(user, "role", None) == "organizer"
+
+
+def is_stall_owner(user, stall):
+    return stall.owner and stall.owner.user == user
 
 
 # ================= PRODUCT LIST =================
@@ -33,8 +42,13 @@ def product_by_stall(request, stall_id):
 
 
 # ================= ADD PRODUCT =================
+@login_required
 def product_create(request):
-    stalls = Stall.objects.all()
+    if is_organizer(request.user):
+        stalls = Stall.objects.all()
+    else:
+        stalls = Stall.objects.filter(owner__user=request.user)
+
     preselected_stall_id = request.GET.get('stall')
 
     if request.method == "POST":
@@ -48,6 +62,9 @@ def product_create(request):
             })
 
         stall = get_object_or_404(Stall, id=stall_id)
+
+        if not is_organizer(request.user) and not is_stall_owner(request.user, stall):
+            return redirect('product_list')
 
         Product.objects.create(
             stall=stall,
@@ -67,15 +84,29 @@ def product_create(request):
 
 
 # ================= EDIT PRODUCT =================
+@login_required
 def edit_product(request, id):
     product = get_object_or_404(Product, id=id)
-    stalls = Stall.objects.all()
+
+    if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
+        return redirect('product_by_stall', stall_id=product.stall.id)
+
+    if is_organizer(request.user):
+        stalls = Stall.objects.all()
+    else:
+        stalls = Stall.objects.filter(owner__user=request.user)
 
     if request.method == "POST":
+        stall_id = request.POST.get('stall')
+        new_stall = get_object_or_404(Stall, id=stall_id)
+
+        if not is_organizer(request.user) and not is_stall_owner(request.user, new_stall):
+            return redirect('product_by_stall', stall_id=product.stall.id)
+
         product.name = request.POST.get('name')
         product.price = request.POST.get('price')
         product.description = request.POST.get('description') or ""
-        product.stall_id = request.POST.get('stall')
+        product.stall = new_stall
         product.stock_quantity = int(request.POST.get('stock_quantity') or 0)
 
         if request.FILES.get('product_image'):
@@ -92,9 +123,13 @@ def edit_product(request, id):
 
 
 # ================= DELETE PRODUCT =================
+@login_required
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
     stall_id = product.stall.id
+
+    if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
+        return redirect('product_by_stall', stall_id=stall_id)
 
     if request.method == "POST":
         product.delete()

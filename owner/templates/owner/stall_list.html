@@ -22,7 +22,7 @@
 
         <option value="inactive"
             {% if status == "inactive" %}selected{% endif %}>
-            Inactive
+            Pending Approval
         </option>
     </select>
 
@@ -100,8 +100,15 @@
     {% else %}
         <p>
             <b>Status:</b>
-            <span style="color:red;">Inactive</span>
+            <span style="color:orange;">Pending Approval</span>
         </p>
+
+        {% if user.role == "organizer" %}
+            <a href="{% url 'stall_approve' s.id %}"
+               class="btn btn-success">
+                Approve Stall
+            </a>
+        {% endif %}
     {% endif %}
 
     <a href="{% url 'stall_detail' s.id %}" class="btn">
@@ -192,8 +199,15 @@
     {% else %}
         <p>
             <b>Status:</b>
-            <span style="color:red;">Inactive</span>
+            <span style="color:orange;">Pending Approval</span>
         </p>
+
+        {% if user.role == "organizer" %}
+            <a href="{% url 'stall_approve' s.id %}"
+               class="btn btn-success">
+                Approve Stall
+            </a>
+        {% endif %}
     {% endif %}
 
     <a href="{% url 'stall_detail' s.id %}" class="btn">

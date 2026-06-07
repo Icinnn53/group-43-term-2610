@@ -15,6 +15,7 @@ urlpatterns = [
     path('stalls/<int:id>/', views.stall_detail, name='stall_detail'),
     path('stalls/<int:id>/edit/', views.stall_edit, name='stall_edit'),
     path('stalls/<int:id>/delete/', views.stall_delete, name='stall_delete'),
+    path('stalls/<int:id>/approve/', views.stall_approve, name='stall_approve'),
 
     # ================= EVENT → STALLS =================
     path('events/<int:event_id>/stalls/', views.stall_by_event, name='stall_by_event'),

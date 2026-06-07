@@ -51,14 +51,18 @@
 
     <hr>
 
-    <a href="{% url 'edit_product' product.id %}">
-        Edit
-    </a>
+    {% if user.role == "organizer" or product.stall.owner.user == user %}
 
-    <form method="POST" action="{% url 'delete_product' product.id %}">
-        {% csrf_token %}
-        <button type="submit">Delete</button>
-    </form>
+        <a href="{% url 'edit_product' product.id %}">
+            Edit
+        </a>
+
+        <form method="POST" action="{% url 'delete_product' product.id %}">
+            {% csrf_token %}
+            <button type="submit">Delete</button>
+        </form>
+
+    {% endif %}
 
 </div>
 

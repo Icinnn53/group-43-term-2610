@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from events.models import Event
 from .models import Owner, Stall
 
@@ -89,10 +90,8 @@ def stall_create(request):
             capacity=int(request.POST.get('capacity') or 1),
             rental_fee=float(request.POST.get('rental_fee') or 0),
             stall_image=request.FILES.get('stall_image'),
-
             rental_start_date=request.POST.get('rental_start_date') or None,
             rental_end_date=request.POST.get('rental_end_date') or None,
-            is_active=True if request.POST.get('is_active') == 'on' else False,
         )
 
         return redirect('stall_list')
@@ -101,6 +100,21 @@ def stall_create(request):
         'owner': owner,
         'events': events
     })
+
+
+# =========================================================
+# APPROVE STALL - ORGANIZER ONLY
+# =========================================================
+@login_required
+def stall_approve(request, id):
+    if getattr(request.user, "role", None) != "organizer":
+        return redirect('stall_list')
+
+    stall = get_object_or_404(Stall, id=id)
+    stall.is_active = True
+    stall.save()
+
+    return redirect('stall_list')
 
 
 # =========================================================
@@ -126,7 +140,6 @@ def stall_edit(request, id):
 
         stall.rental_start_date = request.POST.get('rental_start_date') or None
         stall.rental_end_date = request.POST.get('rental_end_date') or None
-        stall.is_active = True if request.POST.get('is_active') == 'on' else False
 
         if request.FILES.get('stall_image'):
             stall.stall_image = request.FILES.get('stall_image')
