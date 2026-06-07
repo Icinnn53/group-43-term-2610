@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stall Application Details</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
+        .topbar { background: #004a99; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: white; color: #004a99; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15 rgba(0,0,0,0.05); }
+        h2 { color: #004a99; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .detail-group { margin-bottom: 20px; }
+        .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+        .value { font-size: 15px; color: #1e293b; font-weight: 500; }
+        
+    
+        .footer-actions { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 12px; 
+            margin-top: 35px; 
+            border-top: 1px solid #e2e8f0; 
+            padding-top: 20px; 
+        }
+        .approve-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .reject-btn { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .inline-form { display: inline; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <h1>Stall Application</h1>
+        <a href="{% url 'pending_requests' %}" class="btn">Back to Dashboard</a>
+    </div>
+
+    <div class="container">
+        <h2>Registration Details</h2>
+
+        <div class="detail-group">
+            <div class="label">Full Name</div>
+            <div class="value">{{ stall.owner.name }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Email</div>
+            <div class="value">{{ stall.owner.user.email }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Contact Number</div>
+            <div class="value">{{ stall.owner.phone|default:"Not Provided" }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Stall Name</div>
+            <div class="value">{{ stall.name }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Item Selling</div>
+            <div class="value">{{ stall.description|default:"Not Provided" }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Social Media</div>
+            <div class="value">{{ stall.owner.social_media|default:"Not Provided" }}</div>
+        </div>
+
+        <div class="detail-group">
+            <div class="label">Description</div>
+            <div class="value">{{ stall.owner.description|default:"Not Provided" }}</div>
+        </div>
+
+        <div class="footer-actions">
+            <form action="{% url 'approve_stall' stall.id %}" method="POST" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="approve-btn">Approve</button>
+            </form>
+            <form action="{% url 'reject_stall' stall.id %}" method="POST" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="reject-btn">Reject</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -37,7 +37,7 @@
         .reject-btn { background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; }
         .reject-btn:hover { background: #dc2626; }
         
-        .no-data { color: #94a3b8; font-style: italic; padding: 30px text-align: center; background: #f8fafc; border-radius: 8px; border: 2px dashed #e2e8f0; margin-top: 10px; text-align: center; padding: 40px 20px; }
+        .no-data { color: #94a3b8; font-style: italic; padding: 30px; text-align: center; background: #f8fafc; border-radius: 8px; border: 2px dashed #e2e8f0; margin-top: 10px; padding: 40px 20px; }
         .inline-form { display: inline; margin: 0; padding: 0; }
     </style>
 </head>
@@ -146,8 +146,9 @@
                     <thead>
                         <tr>
                             <th>Stall Name</th>
-                            <th>Linked Event Target</th>
+                            <th>Event</th>
                             <th>Vendor Owner</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,6 +157,21 @@
                             <td><strong>{{ stall.name }}</strong></td>
                             <td>{{ stall.event.title }}</td>
                             <td>{{ stall.owner.user.username }}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{% url 'pending_stall_detail' stall.id %}" class="details-btn">Details</a>
+                                    
+                                    <form action="{% url 'approve_stall' stall.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="approve-btn">Approve</button>
+                                    </form>
+                                    
+                                    <form action="{% url 'reject_stall' stall.id %}" method="POST" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="reject-btn">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -168,15 +184,12 @@
 
     <script>
         function switchTab(tabId, element) {
-            // Hide all tab container areas
             const contentSections = document.querySelectorAll('.tab-content');
             contentSections.forEach(section => section.classList.remove('active'));
             
-            // Remove highlighting accents from all button tab headers
             const actionTabs = document.querySelectorAll('.nav-tab');
             actionTabs.forEach(tab => tab.classList.remove('active'));
             
-            // Activate the designated target tab container and target link button elements
             document.getElementById(tabId).classList.add('active');
             element.classList.add('active');
         }

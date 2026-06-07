@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ProfessionalSignupForm
-from .models import CustomUser 
+from .models import CustomUser
 from events.models import Event
 from owner.models import Stall
 
@@ -47,7 +47,7 @@ def profile_view(request):
 def request_organizer_view(request):
     if request.method == 'POST':
         user = request.user
-    
+   
         if user.role == 'student' and not user.is_rejected:
             user.is_organizer_requested = True
             user.save()
@@ -63,15 +63,15 @@ def approve_organizer_view(request, user_id):
     if request.user.role != 'admin':
         messages.error(request, "Access Denied.")
         return redirect('home')
-    
+   
     if request.method == 'POST':
         target_user = get_object_or_404(CustomUser, id=user_id)
         target_user.role = 'organizer'
         target_user.is_organizer_requested = False
-        target_user.is_rejected = False 
+        target_user.is_rejected = False
         target_user.save()
         messages.success(request, f"{target_user.username} is now an Organizer!")
-    
+   
     return redirect('pending_requests')
 
 #rejectorganizer
@@ -80,14 +80,14 @@ def reject_organizer_view(request, user_id):
     if request.user.role != 'admin':
         messages.error(request, "Access Denied.")
         return redirect('home')
-    
+   
     if request.method == 'POST':
         target_user = get_object_or_404(CustomUser, id=user_id)
         target_user.is_organizer_requested = False
         target_user.is_rejected = True
         target_user.save()
         messages.warning(request, f"Request for {target_user.username} has been rejected.")
-    
+   
     return redirect('pending_requests')
 
 @login_required
@@ -138,3 +138,47 @@ def pending_event_detail_view(request, event_id):
         return redirect('home')
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'accounts/pending_event_detail.html', {'event': event})
+
+#Approve Stall View
+@login_required
+def approve_stall_view(request, stall_id):
+    if request.user.role not in ['admin', 'organizer']:
+        messages.error(request, "Access Denied.")
+        return redirect('home')
+    if request.method == 'POST':
+        stall = get_object_or_404(Stall, id=stall_id)
+        stall.is_active = True
+        stall.save()
+        messages.success(request, f"Stall '{stall.name}' space has been successfully approved!")
+    return redirect('pending_requests')
+
+#Reject Stall View
+@login_required
+def reject_stall_view(request, stall_id):
+    if request.user.role not in ['admin', 'organizer']:
+        messages.error(request, "Access Denied.")
+        return redirect('home')
+    if request.method == 'POST':
+        stall = get_object_or_404(Stall, id=stall_id)
+        # Deleting space request clean on explicit rejection
+        stall.delete()
+        messages.warning(request, f"Stall application was rejected and removed.")
+    return redirect('pending_requests')
+
+#View Pending Stall Full Details
+@login_required
+def pending_stall_detail_view(request, stall_id):
+    if request.user.role not in ['admin', 'organizer']:
+        messages.error(request, "Access Denied.")
+        return redirect('home')
+    stall = get_object_or_404(Stall, id=stall_id)
+   
+    current_registrations_count = 0
+    if stall.event:
+        current_registrations_count = stall.event.stalls.filter(is_active=True).count()
+       
+    context = {
+        'stall': stall,
+        'current_registrations': current_registrations_count
+    }
+    return render(request, 'accounts/pending_stall_detail.html', context)

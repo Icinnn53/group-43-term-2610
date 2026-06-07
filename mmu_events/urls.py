@@ -27,6 +27,11 @@ urlpatterns = [
     path('profile/pending-requests/event/<int:event_id>/approve/', account_views.approve_event_view, name='approve_event'),
     path('profile/pending-requests/event/<int:event_id>/reject/', account_views.reject_event_view, name='reject_event'),
 
+    # ======= ADDED STALL ROUTING CHANNELS (MATCHING MECHANICS ABOVE) =======
+    path('profile/stall/detail/<int:stall_id>/', account_views.pending_stall_detail_view, name='pending_stall_detail'),
+    path('profile/stall/approve/<int:stall_id>/', account_views.approve_stall_view, name='approve_stall'),
+    path('profile/stall/reject/<int:stall_id>/', account_views.reject_stall_view, name='reject_stall'),
+
     # ================= EVENTS =================
     path('home/', event_views.event_list, name='home'),
     path('dashboard/', event_views.dashboard, name='dashboard'),
