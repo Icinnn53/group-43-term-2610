@@ -2,142 +2,274 @@
 <html>
 <head>
     <title>Create Event</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: Arial, sans-serif;
-            background: #eef2f7;
-            margin: 0;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
         }
 
-        nav {
-            background: #004a99;
-            color: white;
-            padding: 15px 40px;
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .container {
-            max-width: 750px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        label {
-            font-size: 13px;
+        .nav-logo {
+            font-size: 15px;
             font-weight: 600;
-            color: #444;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 720px;
+            margin: 48px auto;
+            padding: 0 24px 80px;
+        }
+
+        /* ── PAGE HEADING ── */
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+
+        .page-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 32px;
+        }
+
+        /* ── FORM CARD ── */
+        .form-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* ── FORM FIELDS ── */
+        label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.5);
             display: block;
             margin-bottom: 6px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px 14px;
             border-radius: 8px;
-            border: 1px solid #d9d9d9;
-            margin-bottom: 14px;
-            background: #fafafa;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
             font-size: 14px;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border 0.2s;
         }
 
         input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #004a99;
-            background: white;
+            border-color: rgba(99,102,241,0.5);
+            background: rgba(99,102,241,0.05);
         }
 
+        input::placeholder, textarea::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        select option {
+            background: #1e2130;
+            color: #e2e8f0;
+        }
+
+        textarea { resize: vertical; min-height: 90px; }
+
+        /* ── ROW ── */
         .row {
             display: flex;
-            gap: 16px;
+            gap: 14px;
         }
 
-        .row > div {
-            flex: 1;
-        }
+        .row > div { flex: 1; }
 
-        .section {
-            margin-bottom: 18px;
-        }
-
+        /* ── CHECKBOX ROW ── */
         .checkbox-row {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px;
-            background: #f7f9fc;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            accent-color: #6366f1;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .checkbox-row label {
+            margin: 0;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+
+        /* ── FEE BOX ── */
+        #feeBox {
+            display: none;
+            margin-top: 4px;
+            padding: 16px;
+            background: rgba(99,102,241,0.05);
+            border: 1px solid rgba(99,102,241,0.2);
             border-radius: 8px;
         }
 
-        button {
+        /* ── SMALL TEXT ── */
+        .hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.25);
+            margin-top: -12px;
+            margin-bottom: 16px;
+        }
+
+        /* ── SUBMIT BTN ── */
+        .submit-btn {
             width: 100%;
             padding: 13px;
             border: none;
             border-radius: 10px;
-            background: #004a99;
+            background: #6366f1;
             color: white;
-            font-size: 15px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
         }
 
-        button:hover {
-            background: #003a7a;
-        }
+        .submit-btn:hover { background: #4f46e5; }
 
-        .back {
+        /* ── BACK LINK ── */
+        .back-link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 18px;
         }
 
-        .back a {
+        .back-link a {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
             text-decoration: none;
-            color: #004a99;
+            transition: color 0.2s;
         }
 
-        #feeBox {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f5f8ff;
-            border-left: 4px solid #004a99;
-            border-radius: 8px;
-        }
+        .back-link a:hover { color: rgba(255,255,255,0.7); }
     </style>
 </head>
 
 <body>
 
-<nav>
-    <span>Create Event</span>
-    <a href="{% url 'home' %}" style="color:white; text-decoration:none;">Home</a>
-</nav>
+<!-- ── NAVBAR ── -->
+<div class="navbar">
+    <a href="{% url 'home' %}" class="nav-logo">
+        <div class="logo-dot"></div>
+        MMU Events
+    </a>
+    <a href="{% url 'home' %}" class="nav-link">
+        <i class="ti ti-arrow-left" style="font-size:13px;margin-right:4px;"></i>Back to Events
+    </a>
+</div>
 
+<!-- ── CONTENT ── -->
 <div class="container">
 
-    <div class="card">
+    <div class="page-heading">Create New Event</div>
+    <div class="page-sub">Fill in the details below to create your event.</div>
 
-        <h2>Create New Event</h2>
+    <div class="form-card">
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <!-- BASIC -->
+            <!-- BASIC INFO -->
             <div class="section">
+                <div class="section-label">Basic info</div>
+
                 <label>Title</label>
                 {{ form.title }}
 
@@ -147,50 +279,45 @@
                 <label>Location</label>
                 {{ form.location }}
 
-                <label>Event Type</label>
-                {{ form.event_type }}
-
                 <label>Image</label>
                 {{ form.image }}
             </div>
 
-            <!-- DATE / TIME -->
+            <!-- DATE & TIME -->
             <div class="section">
+                <div class="section-label">Date & time</div>
 
                 <div class="row">
                     <div>
-                        <label>Start Date</label>
+                        <label>Start date</label>
                         {{ form.start_date }}
                     </div>
                     <div>
-                        <label>Start Time</label>
+                        <label>Start time</label>
                         {{ form.start_time }}
                     </div>
                 </div>
 
                 <div class="row">
                     <div>
-                        <label>End Date</label>
+                        <label>End date</label>
                         {{ form.end_date }}
                     </div>
                     <div>
-                        <label>End Time</label>
+                        <label>End time</label>
                         {{ form.end_time }}
                     </div>
                 </div>
-
             </div>
 
-            <!-- VENDOR -->
+            <!-- SETTINGS -->
             <div class="section">
+                <div class="section-label">Settings</div>
+
                 <div class="checkbox-row">
                     {{ form.allow_vendors_collaborators }}
                     <label>Allow vendors / collaborators</label>
                 </div>
-            </div>
-
-            <!-- FEE -->
-            <div class="section">
 
                 <div class="checkbox-row">
                     {{ form.enable_registration_fee }}
@@ -198,34 +325,33 @@
                 </div>
 
                 <div id="feeBox">
-                    <label>Registration Fee (RM)</label>
+                    <label>Registration fee (RM)</label>
                     {{ form.registration_fee }}
                 </div>
 
-            </div>
-
-            <!-- CAPACITY -->
-            <div class="section">
-                <label>Max Registrations (Optional)</label>
+                <label>Max registrations <span style="color:rgba(255,255,255,0.25);font-weight:400;">(optional)</span></label>
                 {{ form.max_registrations }}
-                <small style="color: gray;">Leave empty for unlimited</small>
+                <div class="hint">Leave empty for unlimited</div>
             </div>
 
-            <button type="submit">Create Event</button>
+            <button type="submit" class="submit-btn">
+                <i class="ti ti-calendar-plus" style="font-size:14px;margin-right:6px;"></i>
+                Create Event
+            </button>
 
         </form>
 
-        <div class="back">
-            <a href="{% url 'home' %}">← Back to Events</a>
-        </div>
-
     </div>
+
+    <div class="back-link">
+        <a href="{% url 'home' %}">← Back to events</a>
+    </div>
+
 </div>
 
-<!-- JS -->
+<!-- ── JS ── -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const toggle = document.getElementById("enableFee");
     const feeBox = document.getElementById("feeBox");
 
@@ -234,7 +360,6 @@ document.addEventListener("DOMContentLoaded", function () {
             feeBox.style.display = "block";
         } else {
             feeBox.style.display = "none";
-
             const input = feeBox.querySelector("input");
             if (input) input.value = "";
         }
@@ -242,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (toggle) {
         toggle.addEventListener("change", updateFee);
-        updateFee(); // run on load
+        updateFee();
     }
 });
 </script>

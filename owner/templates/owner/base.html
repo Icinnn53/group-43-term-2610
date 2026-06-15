@@ -5,134 +5,216 @@
 <head>
     <meta charset="UTF-8">
     <title>Owner Panel</title>
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
             line-height: 1.6;
         }
 
-        /* NAVBAR */
+        /* ── NAVBAR ── */
         .navbar {
-            background: #2c3e50;
-            padding: 12px 20px;
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 6px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-right: 16px;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
         }
 
         .navbar a {
-            color: white;
+            color: rgba(255,255,255,0.6);
             text-decoration: none;
-            padding: 8px 14px;
-            background: #34495e;
-            border-radius: 6px;
-            transition: 0.2s;
-            font-size: 14px;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
         .navbar a:hover {
-            background: #1abc9c;
-            transform: translateY(-1px);
+            color: #fff;
+            background: rgba(255,255,255,0.07);
         }
 
-        /* SPECIAL BUTTON */
-        .navbar .add-btn {
-            background: #2ecc71;
-            font-weight: bold;
+        .add-btn {
+            background: #6366f1 !important;
+            color: #fff !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            margin-left: 6px;
         }
 
-        .navbar .add-btn:hover {
-            background: #27ae60;
+        .add-btn:hover {
+            background: #4f46e5 !important;
         }
 
-        /* PAGE CONTAINER */
+        /* ── CONTAINER ── */
         .container {
-            padding: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
         }
 
-        /* CARD */
+        /* ── CARD ── */
         .card {
-            background: white;
-            padding: 18px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 14px;
+            transition: all 0.2s;
         }
 
-        /* BUTTON */
+        .card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(99,102,241,0.3);
+        }
+
+        /* ── BUTTONS ── */
         .btn {
             display: inline-block;
-            padding: 8px 14px;
-            background: #3498db;
-            color: white;
-            border-radius: 6px;
+            padding: 8px 16px;
+            background: #6366f1;
+            color: #fff;
+            border-radius: 8px;
             text-decoration: none;
             border: none;
             cursor: pointer;
-            transition: 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        .btn:hover {
-            background: #2980b9;
+        .btn:hover { background: #4f46e5; color: #fff; }
+
+        .btn-success { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+        .btn-success:hover { background: rgba(34,197,94,0.25); color: #86efac; }
+
+        .btn-danger { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .btn-danger:hover { background: rgba(239,68,68,0.25); color: #fca5a5; }
+
+        .btn-outline {
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.12);
         }
 
-        .btn-success {
-            background: #2ecc71;
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.07);
+            color: #fff;
         }
 
-        .btn-success:hover {
-            background: #27ae60;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        /* FORM */
+        /* ── FORMS ── */
         input, textarea, select {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 12px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            padding: 10px 14px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: rgba(99,102,241,0.5);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255,255,255,0.25);
         }
 
         label {
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* ── PAGE HEADING ── */
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.25);
+            font-size: 14px;
+            border: 1px dashed rgba(255,255,255,0.08);
+            border-radius: 14px;
         }
     </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
 
-    <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'owner_list' %}">Owner</a>
-    <a href="{% url 'stall_list' %}">Stalls</a>
-    <a href="{% url 'dashboard' %}">Dashboard</a>
-
-   <!-- CLEAN ADD BUTTON -->
-{% if user.is_authenticated and user.role != "student" %}
-    <a href="{% url 'stall_create' %}" class="add-btn">
-        + Add Stall
+    <a href="{% url 'home' %}" class="nav-logo">
+        <div class="logo-dot"></div>
+        MMU Events
     </a>
-{% endif %}
+
+    <a href="{% url 'home' %}"><i class="ti ti-home" style="font-size:14px;margin-right:4px;"></i>Home</a>
+    <a href="{% url 'owner_list' %}"><i class="ti ti-users" style="font-size:14px;margin-right:4px;"></i>Owners</a>
+    <a href="{% url 'stall_list' %}"><i class="ti ti-building-store" style="font-size:14px;margin-right:4px;"></i>Stalls</a>
+    <a href="{% url 'dashboard' %}"><i class="ti ti-layout-dashboard" style="font-size:14px;margin-right:4px;"></i>Dashboard</a>
+
+    {% if user.is_authenticated and user.role != "student" %}
+        <a href="{% url 'stall_create' %}" class="add-btn">
+            <i class="ti ti-plus" style="font-size:13px;margin-right:4px;"></i>Add Stall
+        </a>
+    {% endif %}
+
 </div>
 
-<!-- CONTENT -->
 <div class="container">
     {% block content %}
     {% endblock %}

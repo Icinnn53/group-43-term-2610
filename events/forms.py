@@ -72,7 +72,6 @@ class EventForm(forms.ModelForm):
             'title',
             'description',
             'location',
-            'event_type',
             'image',
             'allow_vendors_collaborators',
             'max_registrations',

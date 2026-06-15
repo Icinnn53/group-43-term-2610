@@ -1,412 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile - MMU Pop-up Stall System</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MMU Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f2f5;
-      min-height: 100vh;
-      color: #333;
-    }
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .navbar {
-      background: #004a99;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
 
-    .navbar-title {
-      color: #fff;
-      font-size: 18px;
-      font-weight: 600;
-    }
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .nav-btn {
-      background: white;
-      color: #004a99;
-      padding: 7px 16px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    }
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
 
-    .nav-btn:hover {
-      background: #f0f2f5;
-    }
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
 
-    .content {
-      max-width: 700px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
 
-    .banner {
-      background: #004a99;
-      border-radius: 12px 12px 0 0;
-      height: 90px;
-      position: relative;
-    }
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
 
-    .avatar-wrap {
-      position: absolute;
-      bottom: -38px;
-      left: 1.5rem;
-    }
+        /* ── CONTENT ── */
+        .content {
+            max-width: 680px;
+            margin: 48px auto;
+            padding: 0 24px 80px;
+        }
 
-    .avatar {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      background: #e6f1fb;
-      border: 4px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      font-weight: 600;
-      color: #004a99;
-      text-transform: uppercase;
-    }
+        /* ── MESSAGES ── */
+        .alert {
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: #86efac;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
 
-    .profile-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 0 0 12px 12px;
-      padding: 3rem 1.5rem 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+        /* ── PROFILE HEADER ── */
+        .profile-header {
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 16px 16px 0 0;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.5rem;
-    }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(99,102,241,0.2) 0%, transparent 70%);
+        }
 
-    .username {
-      font-size: 22px;
-      font-weight: 600;
-      color: #1a202c;
-    }
+        .avatar-wrap {
+            position: absolute;
+            bottom: -36px;
+            left: 28px;
+        }
 
-    .role-badge {
-      display: inline-flex;
-      align-items: center;
-      background: #e6f1fb;
-      color: #004a99;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-    }
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(99,102,241,0.2);
+            border: 3px solid #080b14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #a5b4fc;
+            text-transform: uppercase;
+        }
 
-    .alert {
-      background: #d4edda;
-      color: #155724;
-  options;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      border: 1px solid #c3e6cb;
-    }
+        /* ── PROFILE CARD ── */
+        .profile-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            padding: 52px 28px 28px;
+        }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 1.5rem;
-    }
+        .username {
+            font-size: 20px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
 
-    .info-item {
-      background: #f7fafc;
-      border-radius: 8px;
-      padding: 12px;
-      border: 1px solid #edf2f7;
-    }
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.25);
+            color: #a5b4fc;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
 
-    .info-label {
-      font-size: 11px;
-      color: #a0aec0;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
+        /* ── INFO GRID ── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
 
-    .info-value {
-      font-size: 14px;
-      color: #2d3748;
-      font-weight: 500;
-      word-break: break-all;
-    }
+        .info-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 14px;
+        }
 
-    .divider {
-      border: none;
-      border-top: 1px solid #edf2f7;
-      margin-bottom: 1.25rem;
-    }
+        .info-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
 
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+        .info-value {
+            font-size: 14px;
+            color: #e2e8f0;
+            font-weight: 500;
+            word-break: break-all;
+        }
 
-    .request-btn {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
-      font-size: 14px;
-    }
+        /* ── DIVIDER ── */
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 20px;
+        }
 
-    .request-btn:hover {
-      background: #218838;
-    }
+        /* ── BANNERS ── */
+        .banner-approved {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: #86efac;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
 
-    .status-box {
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 1.25rem;
-      font-size: 14px;
-    }
+        .banner-rejected {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
 
-    .dashboard-link-btn {
-      display: block;
-      text-align: center;
-      background: #004a99;
-      color: white;
-      padding: 12px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-bottom: 4px;
-      position: relative;
-      font-size: 14px;
-    }
-   
-    .dashboard-link-btn:hover {
-      background: #003671;
-    }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.6;
+            line-height: 1;
+            color: inherit;
+            padding: 0 4px;
+        }
 
-    .btn-logout-container {
-      width: 100%;
-    }
+        .close-btn:hover { opacity: 1; }
 
-    .logout-btn {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 14px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
-    }
+        /* ── STATUS BOX ── */
+        .status-box {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.2);
+            color: #fcd34d;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
 
-    .logout-btn:hover {
-      background: #e60000;
-    }
+        /* ── ACTIONS ── */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    /* CRISP GREEN APPROVED BANNER */
-    .welcome-banner-approved {
-        background: #d4edda;
-        color: #155724;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #c3e6cb;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .btn-request {
+            background: rgba(34,197,94,0.12);
+            color: #86efac;
+            border: 1px solid rgba(34,197,94,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-    /* CLEAN RED REJECTED BANNER */
-    .welcome-banner-rejected {
-        background: #f8d7da;
-        color: #721c24;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        font-weight: normal;
-        border: 1px solid #f5c6cb;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .btn-request:hover {
+            background: rgba(34,197,94,0.2);
+        }
 
-    .close-banner-btn {
-        background: none;
-        border: none;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        padding: 0 5px;
-        line-height: 1;
-    }
+        .btn-pending {
+            background: rgba(99,102,241,0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.2);
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            transition: all 0.2s;
+        }
 
-    .welcome-banner-approved .close-banner-btn { color: #155724; }
-    .welcome-banner-approved .close-banner-btn:hover { color: #0b2e13; }
+        .btn-pending:hover {
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+        }
 
-    .welcome-banner-rejected .close-banner-btn { color: #721c24; }
-    .welcome-banner-rejected .close-banner-btn:hover { color: #491217; }
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #080b14;
+        }
 
-    /* RED NOTIFICATION BADGE STYLE */
-    .notification-badge {
-        background: #ef4444;
-        color: white;
-        font-size: 10px;
-        font-weight: bold;
-        min-width: 16px;
-        height: 16px;
-        padding: 0 4px;
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        border: 1.5px solid white;
-        position: absolute;
-        top: -6px;
-        right: -6px;
-    }
-  </style>
+        .btn-logout {
+            background: rgba(239,68,68,0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239,68,68,0.22);
+        }
+    </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <span class="navbar-title">MMU Pop-up Stall System</span>
-    <a href="/home/" class="nav-btn" style="text-decoration: none; display: inline-block; text-align: center;">Home</a>
-  </nav>
-
-  <div class="content">
-    {% if messages %}
-        {% for message in messages %}<div class="alert">{{ message }}</div>{% endfor %}
-    {% endif %}
-
-    <div class="banner">
-      <div class="avatar-wrap">
-        <div class="avatar">{{ user.username|slice:":1" }}</div>
-      </div>
+    <!-- ── NAVBAR ── -->
+    <div class="navbar">
+        <a href="{% url 'home' %}" class="nav-logo">
+            <div class="logo-dot"></div>
+            MMU Events
+        </a>
+        <a href="{% url 'home' %}" class="nav-link">
+            <i class="ti ti-arrow-left" style="font-size:13px;margin-right:4px;"></i>Home
+        </a>
     </div>
 
-    <div class="profile-card">
-      <div class="top-row">
-        <div class="username">{{ user.username }}</div>
-      </div>
+    <div class="content">
 
-      <div class="role-badge">{{ user.role }}</div>
+        <!-- MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">Username</div>
-          <div class="info-value">{{ user.username }}</div>
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <div class="avatar-wrap">
+                <div class="avatar">{{ user.username|slice:":1" }}</div>
+            </div>
         </div>
-        <div class="info-item">
-          <div class="info-label">Email</div>
-          <div class="info-value">{{ user.email }}</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Phone Number</div>
-          <div class="info-value">{{ user.phone_number }}</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Role</div>
-          <div class="info-value" style="text-transform: uppercase; font-weight: bold;">{{ user.role }}</div>
-        </div>
-      </div>
 
-      <hr class="divider">
+        <!-- PROFILE CARD -->
+        <div class="profile-card">
 
-      {% if user.role == 'organizer' %}
-          <div id="organizerApprovedBanner" class="welcome-banner-approved">
-              <span>You are now an Organizer. You can create and manage events.</span>
-              <button type="button" class="close-banner-btn" onclick="dismissBanner('organizerApprovedBanner', 'approved_banner_hidden_permanently')">&times;</button>
-          </div>
-      {% endif %}
+            <div class="username">{{ user.username }}</div>
 
-      {% if user.role == 'student' and user.is_rejected %}
-          <div id="organizerRejectedBanner" class="welcome-banner-rejected">
-              <span>Your application to be an Organizer has been declined. Please contact administration for further details.</span>
-              <button type="button" class="close-banner-btn" onclick="dismissBanner('organizerRejectedBanner', 'rejected_banner_hidden_permanently')">&times;</button>
-          </div>
-      {% endif %}
+            <div class="role-badge">
+                <i class="ti ti-shield" style="font-size:11px;"></i>
+                {{ user.role }}
+            </div>
 
-      <div class="actions">
-        {% if user.role == 'student' %}
-            {% if user.is_organizer_requested and not user.is_rejected %}
-                <div class="status-box" style="background: #fff3cd; color: #856404;">
-                    Status: Waiting for Admin Approval
+            <!-- INFO GRID -->
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
                 </div>
-            {% elif not user.is_organizer_requested and not user.is_rejected %}
-                <form action="{% url 'request_organizer' %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="request-btn">Request to be Organizer</button>
-                </form>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone number</div>
+                    <div class="info-value">{{ user.phone_number|default:"—" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Role</div>
+                    <div class="info-value" style="text-transform:uppercase;color:#a5b4fc;font-weight:600;">{{ user.role }}</div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- ORGANIZER APPROVED BANNER -->
+            {% if user.role == 'organizer' %}
+                <div id="organizerApprovedBanner" class="banner-approved">
+                    <span><i class="ti ti-circle-check" style="font-size:14px;margin-right:6px;vertical-align:-2px;"></i>You are now an Organizer. You can create and manage events.</span>
+                    <button class="close-btn" onclick="dismissBanner('organizerApprovedBanner', 'approved_banner_hidden_permanently')">&times;</button>
+                </div>
             {% endif %}
-        {% endif %}
 
-        {% if user.role == 'admin' or user.role == 'organizer' %}
-            <a href="{% url 'pending_requests' %}" class="dashboard-link-btn">
-                View Pending Requests Dashboard
-                {% if total_pending_count > 0 %}
-                    <span class="notification-badge">{{ total_pending_count }}</span>
+            <!-- ORGANIZER REJECTED BANNER -->
+            {% if user.role == 'student' and user.is_rejected %}
+                <div id="organizerRejectedBanner" class="banner-rejected">
+                    <span><i class="ti ti-circle-x" style="font-size:14px;margin-right:6px;vertical-align:-2px;"></i>Your application has been declined. Please contact administration.</span>
+                    <button class="close-btn" onclick="dismissBanner('organizerRejectedBanner', 'rejected_banner_hidden_permanently')">&times;</button>
+                </div>
+            {% endif %}
+
+            <!-- ACTIONS -->
+            <div class="actions">
+
+                {% if user.role == 'student' %}
+                    {% if user.is_organizer_requested and not user.is_rejected %}
+                        <div class="status-box">
+                            <i class="ti ti-clock" style="font-size:15px;"></i>
+                            Your organizer request is pending admin approval
+                        </div>
+                    {% elif not user.is_organizer_requested and not user.is_rejected %}
+                        <form action="{% url 'request_organizer' %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-request">
+                                <i class="ti ti-user-plus" style="font-size:15px;"></i>
+                                Request to be Organizer
+                            </button>
+                        </form>
+                    {% endif %}
                 {% endif %}
-            </a>
-        {% endif %}
 
-        <form action="{% url 'logout' %}" method="post" class="btn-logout-container">
-            {% csrf_token %}
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
-      </div>
+                {% if user.role == 'admin' or user.role == 'organizer' %}
+                    <a href="{% url 'pending_requests' %}" class="btn-pending">
+                        <i class="ti ti-bell" style="font-size:15px;"></i>
+                        View Pending Requests
+                        {% if total_pending_count > 0 %}
+                            <span class="notification-badge">{{ total_pending_count }}</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">
+                        <i class="ti ti-logout" style="font-size:15px;"></i>
+                        Log out
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
     </div>
-  </div>
 
-  <script>
-      document.addEventListener("DOMContentLoaded", function() {
-          var approvedBanner = document.getElementById("organizerApprovedBanner");
-          var rejectedBanner = document.getElementById("organizerRejectedBanner");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var approvedBanner = document.getElementById("organizerApprovedBanner");
+            var rejectedBanner = document.getElementById("organizerRejectedBanner");
 
-          if (approvedBanner && localStorage.getItem("approved_banner_hidden_permanently")) {
-              approvedBanner.style.display = "none";
-          }
-          if (rejectedBanner && localStorage.getItem("rejected_banner_hidden_permanently")) {
-              rejectedBanner.style.display = "none";
-          }
-      });
+            if (approvedBanner && localStorage.getItem("approved_banner_hidden_permanently")) {
+                approvedBanner.style.display = "none";
+            }
+            if (rejectedBanner && localStorage.getItem("rejected_banner_hidden_permanently")) {
+                rejectedBanner.style.display = "none";
+            }
+        });
 
-      function dismissBanner(bannerId, storageKey) {
-          var banner = document.getElementById(bannerId);
-          if (banner) {
-              banner.style.display = "none";
-              localStorage.setItem(storageKey, "true");
-          }
-      }
-  </script>
+        function dismissBanner(bannerId, storageKey) {
+            var banner = document.getElementById(bannerId);
+            if (banner) {
+                banner.style.display = "none";
+                localStorage.setItem(storageKey, "true");
+            }
+        }
+    </script>
+
 </body>
 </html>

@@ -1,198 +1,506 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pending Requests Dashboard - MMU Pop-up Stall System</title>
+    <title>Pending Requests - MMU Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
+
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
-        .topbar { background: #004a99; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background: white; color: #004a99; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.2s; }
-        .btn:hover { background: #e6f0fa; }
-        
-        .container { max-width: 1100px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        
-        /* Dashboard Tab Navigation Styling */
-        .dashboard-navigation { display: flex; gap: 15px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 5px; }
-        .nav-tab { background: none; border: none; font-size: 16px; font-weight: 600; color: #64748b; padding: 10px 20px; cursor: pointer; border-radius: 6px 6px 0 0; position: relative; transition: all 0.2s; }
-        .nav-tab:hover { color: #004a99; background: #f8fafc; }
-        .nav-tab.active { color: #004a99; }
-        .nav-tab.active::after { content: ''; position: absolute; bottom: -7px; left: 0; right: 0; height: 3px; background: #004a99; border-radius: 2px; }
-        
-        /* Table and Alert Layouts */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 1100px;
+            margin: 48px auto;
+            padding: 0 24px 80px;
+        }
+
+        /* ── PAGE HEADING ── */
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+
+        .page-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 32px;
+        }
+
+        /* ── ALERTS ── */
+        .alert {
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: #86efac;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-warning {
+            background: rgba(245,158,11,0.08);
+            border-color: rgba(245,158,11,0.2);
+            color: #fcd34d;
+        }
+
+        /* ── TAB NAV ── */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            margin-bottom: 28px;
+            padding-bottom: 0;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.4);
+            padding: 10px 18px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .nav-tab:hover {
+            color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .nav-tab.active {
+            color: #a5b4fc;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6366f1;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .tab-badge {
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        /* ── TAB CONTENT ── */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .alert { background: #d4edda; color: #155724; padding: 12px 18px; border-radius: 6px; margin-bottom: 25px; border-left: 5px solid #28a745; font-weight: 500; }
-        .alert-warning { background: #fff3cd; color: #856404; border-left-color: #ffc107; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 8px; overflow: hidden; }
-        th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid #e2e8f0; }
-        th { background: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        tr:hover { background: #fdfdfd; }
-        
-        /* Action Button Layouts */
-        .action-btns { display: flex; gap: 8px; align-items: center; }
-        .details-btn { background: #0ea5e9; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; transition: background 0.2s; }
-        .details-btn:hover { background: #0284c7; }
-        .approve-btn { background: #10b981; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; }
-        .approve-btn:hover { background: #059669; }
-        .reject-btn { background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; }
-        .reject-btn:hover { background: #dc2626; }
-        
-        .no-data { color: #94a3b8; font-style: italic; padding: 30px; text-align: center; background: #f8fafc; border-radius: 8px; border: 2px dashed #e2e8f0; margin-top: 10px; padding: 40px 20px; }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 18px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+        }
+
+        td {
+            padding: 14px 18px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        td strong {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+
+        /* ── ACTION BUTTONS ── */
+        .action-btns {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
         .inline-form { display: inline; margin: 0; padding: 0; }
+
+        .btn-details {
+            background: rgba(99,102,241,0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.2);
+            padding: 6px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-details:hover {
+            background: rgba(99,102,241,0.22);
+            color: #a5b4fc;
+        }
+
+        .btn-approve {
+            background: rgba(34,197,94,0.12);
+            color: #86efac;
+            border: 1px solid rgba(34,197,94,0.2);
+            padding: 6px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-approve:hover { background: rgba(34,197,94,0.22); }
+
+        .btn-reject {
+            background: rgba(239,68,68,0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.2);
+            padding: 6px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-reject:hover { background: rgba(239,68,68,0.22); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: rgba(255,255,255,0.25);
+            font-size: 13px;
+        }
+
+        .empty-state i {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.4;
+        }
     </style>
 </head>
 <body>
 
-    <div class="topbar">
-        <h1>Pending Requests</h1>
-        <a href="{% url 'profile' %}" class="btn">Back to Profile</a>
+    <!-- ── NAVBAR ── -->
+    <div class="navbar">
+        <a href="{% url 'home' %}" class="nav-logo">
+            <div class="logo-dot"></div>
+            MMU Events
+        </a>
+        <a href="{% url 'profile' %}" class="nav-link">
+            <i class="ti ti-arrow-left" style="font-size:13px;margin-right:4px;"></i>Back to Profile
+        </a>
     </div>
 
     <div class="container">
+
+        <div class="page-heading">Pending Requests</div>
+        <div class="page-sub">Review and manage pending organizer, event, and stall requests.</div>
+
+        <!-- MESSAGES -->
         {% if messages %}
             {% for message in messages %}
-                <div class="alert {% if message.tags == 'warning' %}alert-warning{% endif %}">{{ message }}</div>
+                <div class="alert {% if message.tags == 'warning' %}alert-warning{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
 
-        <div class="dashboard-navigation">
+        <!-- ── TAB NAV ── -->
+        <div class="tab-nav">
             {% if user.role == 'admin' %}
-                <button class="nav-tab active" onclick="switchTab('organizers-tab', this)">Organizer Requests</button>
-                <button class="nav-tab" onclick="switchTab('events-tab', this)">Event Requests</button>
+                <button class="nav-tab active" onclick="switchTab('organizers-tab', this)">
+                    <i class="ti ti-user-check" style="font-size:14px;"></i>
+                    Organizer Requests
+                    {% if pending_organizers %}
+                        <span class="tab-badge">{{ pending_organizers|length }}</span>
+                    {% endif %}
+                </button>
+                <button class="nav-tab" onclick="switchTab('events-tab', this)">
+                    <i class="ti ti-calendar-event" style="font-size:14px;"></i>
+                    Event Requests
+                    {% if pending_events %}
+                        <span class="tab-badge">{{ pending_events|length }}</span>
+                    {% endif %}
+                </button>
             {% endif %}
-            <button class="nav-tab {% if user.role == 'organizer' %}active{% endif %}" onclick="switchTab('stalls-tab', this)">Stall Requests</button>
+            <button class="nav-tab {% if user.role == 'organizer' %}active{% endif %}" onclick="switchTab('stalls-tab', this)">
+                <i class="ti ti-building-store" style="font-size:14px;"></i>
+                Stall Requests
+                {% if pending_vendors %}
+                    <span class="tab-badge">{{ pending_vendors|length }}</span>
+                {% endif %}
+            </button>
         </div>
 
+        <!-- ── ORGANIZER REQUESTS ── -->
         {% if user.role == 'admin' %}
         <div id="organizers-tab" class="tab-content active">
             {% if pending_organizers %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for u in pending_organizers %}
-                        <tr>
-                            <td>{{ u.username }}</td>
-                            <td>{{ u.email }}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <form action="{% url 'approve_organizer' u.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="approve-btn">Approve</button>
-                                    </form>
-                                    <form action="{% url 'reject_organizer' u.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="reject-btn">Reject</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in pending_organizers %}
+                            <tr>
+                                <td><strong>{{ u.username }}</strong></td>
+                                <td>{{ u.email }}</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <form action="{% url 'approve_organizer' u.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-approve">
+                                                <i class="ti ti-check" style="font-size:12px;"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form action="{% url 'reject_organizer' u.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-reject">
+                                                <i class="ti ti-x" style="font-size:12px;"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
-                <div class="no-data">No pending organizer registration applications found.</div>
+                <div class="empty-state">
+                    <i class="ti ti-user-check"></i>
+                    No pending organizer requests
+                </div>
             {% endif %}
         </div>
 
+        <!-- ── EVENT REQUESTS ── -->
         <div id="events-tab" class="tab-content">
             {% if pending_events %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Event Title</th>
-                            <th>Submitted By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for event in pending_events %}
-                        <tr>
-                            <td><strong>{{ event.title }}</strong></td>
-                            <td>{{ event.organizer.username }}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <a href="{% url 'pending_event_detail' event.id %}" class="details-btn">Details</a>
-                                    
-                                    <form action="{% url 'approve_event' event.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="approve-btn">Approve</button>
-                                    </form>
-                                    
-                                    <form action="{% url 'reject_event' event.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="reject-btn">Reject</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event title</th>
+                                <th>Submitted by</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in pending_events %}
+                            <tr>
+                                <td><strong>{{ event.title }}</strong></td>
+                                <td>{{ event.organizer.username }}</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="{% url 'pending_event_detail' event.id %}" class="btn-details">
+                                            <i class="ti ti-eye" style="font-size:12px;"></i> Details
+                                        </a>
+                                        <form action="{% url 'approve_event' event.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-approve">
+                                                <i class="ti ti-check" style="font-size:12px;"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form action="{% url 'reject_event' event.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-reject">
+                                                <i class="ti ti-x" style="font-size:12px;"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
-                <div class="no-data">No pending event verification applications found.</div>
+                <div class="empty-state">
+                    <i class="ti ti-calendar-off"></i>
+                    No pending event requests
+                </div>
             {% endif %}
         </div>
         {% endif %}
 
+        <!-- ── STALL REQUESTS ── -->
         <div id="stalls-tab" class="tab-content {% if user.role == 'organizer' %}active{% endif %}">
             {% if pending_vendors %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Stall Name</th>
-                            <th>Event</th>
-                            <th>Vendor Owner</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for stall in pending_vendors %}
-                        <tr>
-                            <td><strong>{{ stall.name }}</strong></td>
-                            <td>{{ stall.event.title }}</td>
-                            <td>{{ stall.owner.user.username }}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <a href="{% url 'pending_stall_detail' stall.id %}" class="details-btn">Details</a>
-                                    
-                                    <form action="{% url 'approve_stall' stall.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="approve-btn">Approve</button>
-                                    </form>
-                                    
-                                    <form action="{% url 'reject_stall' stall.id %}" method="POST" class="inline-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="reject-btn">Reject</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stall name</th>
+                                <th>Event</th>
+                                <th>Vendor</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stall in pending_vendors %}
+                            <tr>
+                                <td><strong>{{ stall.name }}</strong></td>
+                                <td>{{ stall.event.title }}</td>
+                                <td>{{ stall.owner.user.username }}</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="{% url 'pending_stall_detail' stall.id %}" class="btn-details">
+                                            <i class="ti ti-eye" style="font-size:12px;"></i> Details
+                                        </a>
+                                        <form action="{% url 'approve_stall' stall.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-approve">
+                                                <i class="ti ti-check" style="font-size:12px;"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form action="{% url 'reject_stall' stall.id %}" method="POST" class="inline-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-reject">
+                                                <i class="ti ti-x" style="font-size:12px;"></i> Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
-                <div class="no-data">No pending stall space assignments currently waiting approval.</div>
+                <div class="empty-state">
+                    <i class="ti ti-building-store"></i>
+                    No pending stall requests
+                </div>
             {% endif %}
         </div>
+
     </div>
 
     <script>
         function switchTab(tabId, element) {
-            const contentSections = document.querySelectorAll('.tab-content');
-            contentSections.forEach(section => section.classList.remove('active'));
-            
-            const actionTabs = document.querySelectorAll('.nav-tab');
-            actionTabs.forEach(tab => tab.classList.remove('active'));
-            
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             element.classList.add('active');
         }
     </script>
+
 </body>
 </html>

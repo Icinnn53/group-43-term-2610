@@ -1,167 +1,380 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>Dashboard - MMU Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #333;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
         }
 
-        .topbar {
-            background: #004a99;
-            color: white;
-            padding: 15px 25px;
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .topbar h1 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .btn {
-            background: white;
-            color: #004a99;
-            padding: 7px 12px;
-            border-radius: 6px;
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
-            font-weight: bold;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── PAGE HEADING ── */
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+
+        .page-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 40px;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            margin-top: 36px;
+        }
+
+        .section-header:first-of-type { margin-top: 0; }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 14px;
         }
 
-        .btn:hover {
-            background: #e6e6e6;
+        .icon-concert { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+        .icon-tournament { background: rgba(245,158,11,0.12); color: #fcd34d; }
+        .icon-bazaar { background: rgba(34,197,94,0.12); color: #86efac; }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.4);
         }
 
-        .container {
-            max-width: 950px;
-            margin: auto;
-            padding: 25px;
+        .section-count {
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
         }
 
-        h2 {
-            margin-top: 25px;
-            border-left: 5px solid #004a99;
-            padding-left: 10px;
+        .section-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 16px;
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            transition: 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-        }
-
-        .link {
+        /* ── EVENT CARD ── */
+        .event-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 10px;
             text-decoration: none;
             color: inherit;
             display: block;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .title {
-            font-size: 16px;
-            font-weight: bold;
+        .event-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(99,102,241,0.3);
+            transform: translateY(-1px);
+            color: inherit;
         }
 
-        .meta {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 4px 8px;
+        .event-card:hover::before { opacity: 1; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #f1f5f9;
+        }
+
+        .type-badge {
             font-size: 11px;
-            border-radius: 5px;
-            color: white;
-            margin-bottom: 8px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .concert { background: #6f42c1; }
-        .tournament { background: #fd7e14; }
-        .bazaar { background: #20c997; }
+        .badge-concert {
+            background: rgba(99,102,241,0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
 
-        .empty {
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            color: #777;
+        .badge-tournament {
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+
+        .badge-bazaar {
+            background: rgba(34,197,94,0.12);
+            color: #86efac;
+            border: 1px solid rgba(34,197,94,0.2);
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .event-meta span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-meta i { font-size: 13px; }
+
+        .view-link {
+            font-size: 12px;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: rgba(255,255,255,0.2);
+            font-size: 13px;
+            border: 1px dashed rgba(255,255,255,0.07);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state i {
+            font-size: 26px;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.4;
         }
     </style>
 </head>
 
 <body>
 
-<div class="topbar">
-    <h1>My Dashboard</h1>
-    <a href="{% url 'home' %}" class="btn">Home</a>
-</div>
-
-<div class="container">
-
-    <!-- CONCERTS -->
-    <h2>Concert Registrations</h2>
-
-    {% for reg in concert_regs %}
-        <a href="{% url 'event_detail' reg.event.id %}" class="link">
-            <div class="card">
-                <div class="tag concert">Concert</div>
-                <div class="title">{{ reg.event.title }}</div>
-                <div class="meta">{{ reg.event.location }}</div>
-                <div class="meta">{{ reg.event.start_date }} → {{ reg.event.end_date }}</div>
-            </div>
+    <!-- ── NAVBAR ── -->
+    <div class="navbar">
+        <a href="{% url 'home' %}" class="nav-logo">
+            <div class="logo-dot"></div>
+            MMU Events
         </a>
-    {% empty %}
-        <div class="empty">No concert registrations yet.</div>
-    {% endfor %}
-
-    <!-- TOURNAMENTS -->
-    <h2>Tournament Registrations</h2>
-
-    {% for reg in tournament_regs %}
-        <a href="{% url 'event_detail' reg.event.id %}" class="link">
-            <div class="card">
-                <div class="tag tournament">Tournament</div>
-                <div class="title">{{ reg.event.title }}</div>
-                <div class="meta">{{ reg.event.location }}</div>
-                <div class="meta">{{ reg.event.start_date }} → {{ reg.event.end_date }}</div>
-            </div>
+        <a href="{% url 'home' %}" class="nav-link">
+            <i class="ti ti-arrow-left" style="font-size:13px;margin-right:4px;"></i>Home
         </a>
-    {% empty %}
-        <div class="empty">No tournament registrations yet.</div>
-    {% endfor %}
+    </div>
 
-    <!-- BAZAAR -->
-    <h2>Bazaar Registrations</h2>
+    <div class="container">
 
-    {% for reg in bazaar_regs %}
-        <a href="{% url 'event_detail' reg.event.id %}" class="link">
-            <div class="card">
-                <div class="tag bazaar">Bazaar</div>
-                <div class="title">{{ reg.event.title }}</div>
-                <div class="meta">{{ reg.event.location }}</div>
-                <div class="meta">{{ reg.event.start_date }} → {{ reg.event.end_date }}</div>
+        <div class="page-heading">My Dashboard</div>
+        <div class="page-sub">All your event registrations in one place.</div>
+
+        <!-- ── CONCERTS ── -->
+        <div class="section-header">
+            <div class="section-icon icon-concert">
+                <i class="ti ti-music"></i>
             </div>
-        </a>
-    {% empty %}
-        <div class="empty">No bazaar registrations yet.</div>
-    {% endfor %}
+            <div class="section-title">Concert Registrations</div>
+            <div class="section-count">{{ concert_regs|length }}</div>
+        </div>
+        <hr class="section-divider">
 
-</div>
+        {% for reg in concert_regs %}
+            <a href="{% url 'event_detail' reg.event.id %}" class="event-card">
+                <div class="card-top">
+                    <div class="event-title">{{ reg.event.title }}</div>
+                    <span class="type-badge badge-concert">Concert</span>
+                </div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ reg.event.location }}</span>
+                    <span><i class="ti ti-calendar"></i>{{ reg.event.start_date|date:"d M Y" }}</span>
+                    <span><i class="ti ti-arrow-right"></i>{{ reg.event.end_date|date:"d M Y" }}</span>
+                </div>
+                <div class="view-link">
+                    View event <i class="ti ti-arrow-right"></i>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">
+                <i class="ti ti-music-off"></i>
+                No concert registrations yet
+            </div>
+        {% endfor %}
+
+        <!-- ── TOURNAMENTS ── -->
+        <div class="section-header">
+            <div class="section-icon icon-tournament">
+                <i class="ti ti-trophy"></i>
+            </div>
+            <div class="section-title">Tournament Registrations</div>
+            <div class="section-count">{{ tournament_regs|length }}</div>
+        </div>
+        <hr class="section-divider">
+
+        {% for reg in tournament_regs %}
+            <a href="{% url 'event_detail' reg.event.id %}" class="event-card">
+                <div class="card-top">
+                    <div class="event-title">{{ reg.event.title }}</div>
+                    <span class="type-badge badge-tournament">Tournament</span>
+                </div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ reg.event.location }}</span>
+                    <span><i class="ti ti-calendar"></i>{{ reg.event.start_date|date:"d M Y" }}</span>
+                    <span><i class="ti ti-arrow-right"></i>{{ reg.event.end_date|date:"d M Y" }}</span>
+                </div>
+                <div class="view-link">
+                    View event <i class="ti ti-arrow-right"></i>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">
+                <i class="ti ti-trophy-off"></i>
+                No tournament registrations yet
+            </div>
+        {% endfor %}
+
+        <!-- ── BAZAAR ── -->
+        <div class="section-header">
+            <div class="section-icon icon-bazaar">
+                <i class="ti ti-shopping-bag"></i>
+            </div>
+            <div class="section-title">Bazaar Registrations</div>
+            <div class="section-count">{{ bazaar_regs|length }}</div>
+        </div>
+        <hr class="section-divider">
+
+        {% for reg in bazaar_regs %}
+            <a href="{% url 'event_detail' reg.event.id %}" class="event-card">
+                <div class="card-top">
+                    <div class="event-title">{{ reg.event.title }}</div>
+                    <span class="type-badge badge-bazaar">Bazaar</span>
+                </div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ reg.event.location }}</span>
+                    <span><i class="ti ti-calendar"></i>{{ reg.event.start_date|date:"d M Y" }}</span>
+                    <span><i class="ti ti-arrow-right"></i>{{ reg.event.end_date|date:"d M Y" }}</span>
+                </div>
+                <div class="view-link">
+                    View event <i class="ti ti-arrow-right"></i>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">
+                <i class="ti ti-shopping-bag"></i>
+                No bazaar registrations yet
+            </div>
+        {% endfor %}
+
+    </div>
 
 </body>
 </html>

@@ -1,263 +1,569 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Events Dashboard</title>
+    <title>MMU Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f6f8;
-            color: #333;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
         }
 
-        .topbar {
-            background: #004a99;
-            color: white;
-            padding: 15px 25px;
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .topbar h1 {
-            font-size: 18px;
-            margin: 0;
+        .nav-logo {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
         }
 
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             align-items: center;
         }
 
-        .btn {
-            background: white;
-            color: #004a99;
-            padding: 7px 12px;
-            border-radius: 6px;
+        .nav-link {
+            color: rgba(255,255,255,0.6);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+
+        .nav-btn {
+            background: #6366f1;
+            color: #fff;
+            font-size: 13px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover { background: #4f46e5; color: #fff; }
+
+        .nav-btn-outline {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-btn-outline:hover {
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+        }
+
+        .profile-badge {
             position: relative;
+            display: inline-block;
         }
 
-        .btn:hover {
-            background: #e6e6e6;
-        }
-
-        .profile-btn {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        /*  RED NOTIFICATION BADGE STYLE */
         .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
             background: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            min-width: 16px;
-            height: 16px;
-            padding: 0 4px;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            min-width: 15px;
+            height: 15px;
             border-radius: 10px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border: 1.5px solid white;
+            border: 1.5px solid #080b14;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
             position: absolute;
-            top: -6px;
-            right: -6px;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .logout-btn {
-            border: none;
-            background: #ff4d4d;
-            color: white;
-            padding: 7px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.25);
+            color: #a5b4fc;
+            font-size: 12px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 24px;
         }
 
-        /* 🔍 NEW SEARCH STYLE */
-        .search-box {
-            padding: 6px;
-            border-radius: 5px;
-            border: none;
-            width: 180px;
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
         }
 
-        .search-btn {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 5px;
-            background: #ffc107;
-            font-weight: bold;
-            cursor: pointer;
+        .hero h1 span {
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            padding: 25px;
+        .hero p {
+            font-size: 16px;
+            color: rgba(255,255,255,0.5);
+            max-width: 440px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
         }
 
-        h2 {
-            margin-top: 25px;
-            border-left: 5px solid #004a99;
-            padding-left: 10px;
+        /* ── SEARCH ── */
+        .search-wrap {
+            max-width: 500px;
+            margin: 0 auto 64px;
+            display: flex;
+            gap: 8px;
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
+        .search-wrap form {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: 0.2s;
+            padding: 11px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-input:focus { border-color: rgba(99,102,241,0.5); }
+
+        .search-submit {
+            background: #6366f1;
+            border: none;
+            border-radius: 10px;
+            padding: 11px 18px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
         }
 
-        .event-link {
+        .search-submit:hover { background: #4f46e5; }
+
+        /* ── MAIN CONTENT ── */
+        .main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-ongoing { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .dot-upcoming { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .dot-past { background: #64748b; }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .section-count {
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 48px;
+            margin-top: 12px;
+        }
+
+        /* ── EVENT GRID ── */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* ── EVENT CARD ── */
+        .event-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 20px;
             text-decoration: none;
             color: inherit;
             display: block;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .title {
-            font-size: 18px;
-            font-weight: bold;
+        .event-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(99,102,241,0.3);
+            transform: translateY(-2px);
+            color: inherit;
         }
 
-        .meta {
-            font-size: 13px;
-            color: #666;
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 4px 8px;
+        .event-card:hover::before { opacity: 1; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .event-type-badge {
             font-size: 11px;
-            border-radius: 5px;
-            color: white;
-            margin-bottom: 5px;
-            margin-right: 5px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .ongoing { background: #28a745; }
-        .future { background: #ff9800; }
-        .past { background: #6c757d; }
+        .type-concert { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+        .type-bazaar { background: rgba(34,197,94,0.12); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+        .type-tournament { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+        .type-default { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
 
-        .approved { background: #17a2b8; }
-        .rejected { background: #dc3545; }
-        .pending { background: #ffc107; color: black; }
+        .status-pill {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .status-approved { background: rgba(34,197,94,0.12); color: #86efac; }
+        .status-pending { background: rgba(245,158,11,0.12); color: #fcd34d; }
+        .status-rejected { background: rgba(239,68,68,0.12); color: #fca5a5; }
+
+        .event-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .event-meta span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .event-meta i { font-size: 13px; }
+
+        .card-footer-row {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-link {
+            font-size: 12px;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: rgba(255,255,255,0.25);
+            font-size: 14px;
+            border: 1px dashed rgba(255,255,255,0.08);
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .query-result {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 24px;
+        }
+
+        .query-result b { color: #a5b4fc; }
     </style>
 </head>
 
 <body>
 
-<div class="topbar">
-    <h1>MMU Event System</h1>
+<!-- ── NAVBAR ── -->
+<div class="navbar">
+
+    <a href="{% url 'home' %}" class="nav-logo">
+        <div class="logo-dot"></div>
+        MMU Events
+    </a>
 
     <div class="nav-links">
 
-       <form method="GET" action="{% url 'stall_list' %}">
-    <input
-        type="text"
-        name="q"
-        class="search-box"
-        placeholder="Search stall, owner, event..."
-        value="{{ request.GET.q }}"
-    >
-    <button type="submit" class="search-btn">🔍</button>
-</form>
+        <form method="GET" action="{% url 'home' %}" style="display:flex;gap:6px;align-items:center;">
+            <input
+                type="text"
+                name="q"
+                class="search-input"
+                style="width:200px;"
+                placeholder="Search events..."
+                value="{{ request.GET.q }}"
+            >
+            <button type="submit" class="search-submit">
+                <i class="ti ti-search"></i>
+            </button>
+        </form>
 
-        <a href="{% url 'home' %}" class="btn">Home</a>
+        <a href="{% url 'stall_list' %}" class="nav-link">Stalls</a>
+        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
 
-        <a href="{% url 'profile' %}" class="btn profile-btn">
-            Profile
+        <div class="profile-badge">
+            <a href="{% url 'profile' %}" class="nav-link">
+                <i class="ti ti-user" style="font-size:15px;"></i> Profile
+            </a>
             {% if total_pending_count > 0 %}
                 <span class="notification-badge">{{ total_pending_count }}</span>
             {% endif %}
-        </a>
-
-        <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
-
-        <a href="{% url 'stall_list' %}" class="btn">Stalls</a>
+        </div>
 
         {% if user.role == 'organizer' or user.role == 'admin' %}
-            <a href="{% url 'create_event_select' %}" class="btn">+ Create Event</a>
+            <a href="{% url 'create_event_select' %}" class="nav-btn">
+                <i class="ti ti-plus" style="font-size:13px;"></i> Create event
+            </a>
         {% endif %}
+
+        <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn-outline">Log out</button>
+        </form>
+
     </div>
 </div>
 
-<div class="container">
+<!-- ── HERO ── -->
+<div class="hero">
+    <div class="hero-tag">
+        <i class="ti ti-calendar-event" style="font-size:12px;"></i>
+        MMU Event Platform
+    </div>
+    <h1>Discover &amp; join<br><span>events near you</span></h1>
+    <p>Browse concerts, bazaars, tournaments and more — all happening around campus.</p>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
 
     {% if request.GET.q %}
-        <p>Showing results for: "<b>{{ request.GET.q }}</b>"</p>
+        <p class="query-result">Showing results for: <b>"{{ request.GET.q }}"</b></p>
     {% endif %}
 
-    <h2>Ongoing Events</h2>
+    <!-- ONGOING -->
+    <div class="section-header">
+        <div class="section-dot dot-ongoing"></div>
+        <div class="section-title">Ongoing</div>
+        <div class="section-count">{{ ongoing|length }}</div>
+    </div>
 
-    {% for event in ongoing %}
-        <a class="event-link" href="{% url 'event_detail' event.id %}">
-            <div class="card">
-                <div class="tag {{ event.status }}">
-                    {{ event.status|upper }}
+    <div class="events-grid">
+        {% for event in ongoing %}
+            <a class="event-card" href="{% url 'event_detail' event.id %}">
+                <div class="card-top">
+                    <span class="event-type-badge type-{{ event.event_type }}">
+                        {{ event.get_event_type_display }}
+                    </span>
+                    <span class="status-pill status-{{ event.status }}">
+                        {{ event.status }}
+                    </span>
                 </div>
-
-                <div class="tag ongoing">ONGOING</div>
-
-                <div class="title">{{ event.title }}</div>
-                <div class="meta">{{ event.location }}</div>
-            </div>
-        </a>
-    {% empty %}
-        <p>No ongoing events</p>
-    {% endfor %}
-
-    <h2>Upcoming Events</h2>
-
-    {% for event in future %}
-        <a class="event-link" href="{% url 'event_detail' event.id %}">
-            <div class="card">
-                <div class="tag {{ event.status }}">
-                    {{ event.status|upper }}
+                <div class="event-title">{{ event.title }}</div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ event.location }}</span>
+                    <span><i class="ti ti-clock"></i>Ends {{ event.end_date|date:"d M Y, H:i" }}</span>
                 </div>
-
-                <div class="tag future">UPCOMING</div>
-
-                <div class="title">{{ event.title }}</div>
-                <div class="meta">{{ event.location }}</div>
-            </div>
-        </a>
-    {% empty %}
-        <p>No upcoming events</p>
-    {% endfor %}
-
-    <h2>Past Events</h2>
-
-    {% for event in past %}
-        <a class="event-link" href="{% url 'event_detail' event.id %}">
-            <div class="card">
-                <div class="tag {{ event.status }}">
-                    {{ event.status|upper }}
+                <div class="card-footer-row">
+                    <span class="view-link">View event <i class="ti ti-arrow-right"></i></span>
                 </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">No ongoing events right now</div>
+        {% endfor %}
+    </div>
 
-                <div class="tag past">PAST</div>
+    <hr class="section-divider">
 
-                <div class="title">{{ event.title }}</div>
-                <div class="meta">{{ event.location }}</div>
-            </div>
-        </a>
-    {% empty %}
-        <p>No past events</p>
-    {% endfor %}
+    <!-- UPCOMING -->
+    <div class="section-header">
+        <div class="section-dot dot-upcoming"></div>
+        <div class="section-title">Upcoming</div>
+        <div class="section-count">{{ future|length }}</div>
+    </div>
+
+    <div class="events-grid">
+        {% for event in future %}
+            <a class="event-card" href="{% url 'event_detail' event.id %}">
+                <div class="card-top">
+                    <span class="event-type-badge type-{{ event.event_type }}">
+                        {{ event.get_event_type_display }}
+                    </span>
+                    <span class="status-pill status-{{ event.status }}">
+                        {{ event.status }}
+                    </span>
+                </div>
+                <div class="event-title">{{ event.title }}</div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ event.location }}</span>
+                    <span><i class="ti ti-clock"></i>Starts {{ event.start_date|date:"d M Y, H:i" }}</span>
+                </div>
+                <div class="card-footer-row">
+                    <span class="view-link">View event <i class="ti ti-arrow-right"></i></span>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">No upcoming events</div>
+        {% endfor %}
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- PAST -->
+    <div class="section-header">
+        <div class="section-dot dot-past"></div>
+        <div class="section-title">Past</div>
+        <div class="section-count">{{ past|length }}</div>
+    </div>
+
+    <div class="events-grid">
+        {% for event in past %}
+            <a class="event-card" href="{% url 'event_detail' event.id %}">
+                <div class="card-top">
+                    <span class="event-type-badge type-{{ event.event_type }}">
+                        {{ event.get_event_type_display }}
+                    </span>
+                    <span class="status-pill status-{{ event.status }}">
+                        {{ event.status }}
+                    </span>
+                </div>
+                <div class="event-title">{{ event.title }}</div>
+                <div class="event-meta">
+                    <span><i class="ti ti-map-pin"></i>{{ event.location }}</span>
+                    <span><i class="ti ti-clock"></i>Ended {{ event.end_date|date:"d M Y, H:i" }}</span>
+                </div>
+                <div class="card-footer-row">
+                    <span class="view-link">View event <i class="ti ti-arrow-right"></i></span>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">No past events</div>
+        {% endfor %}
+    </div>
 
 </div>
 
