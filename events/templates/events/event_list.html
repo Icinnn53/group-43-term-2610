@@ -398,7 +398,6 @@
 
 <body>
 
-<!-- ── NAVBAR ── -->
 <div class="navbar">
 
     <a href="{% url 'home' %}" class="nav-logo">
@@ -423,32 +422,37 @@
         </form>
 
         <a href="{% url 'stall_list' %}" class="nav-link">Stalls</a>
-        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
 
-        <div class="profile-badge">
-            <a href="{% url 'profile' %}" class="nav-link">
-                <i class="ti ti-user" style="font-size:15px;"></i> Profile
-            </a>
-            {% if total_pending_count > 0 %}
-                <span class="notification-badge">{{ total_pending_count }}</span>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+
+            <div class="profile-badge">
+                <a href="{% url 'profile' %}" class="nav-link">
+                    <i class="ti ti-user" style="font-size:15px;"></i> Profile
+                </a>
+                {% if total_pending_count > 0 %}
+                    <span class="notification-badge">{{ total_pending_count }}</span>
+                {% endif %}
+            </div>
+
+            {% if user.role == 'organizer' or user.role == 'admin' %}
+                <a href="{% url 'create_event_select' %}" class="nav-btn">
+                    <i class="ti ti-plus" style="font-size:13px;"></i> Create event
+                </a>
             {% endif %}
-        </div>
 
-        {% if user.role == 'organizer' or user.role == 'admin' %}
-            <a href="{% url 'create_event_select' %}" class="nav-btn">
-                <i class="ti ti-plus" style="font-size:13px;"></i> Create event
-            </a>
+            <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="nav-btn-outline">Log out</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Log in</a>
+            <a href="{% url 'signup' %}" class="nav-btn">Sign up</a>
         {% endif %}
-
-        <form method="POST" action="{% url 'logout' %}" style="margin:0;">
-            {% csrf_token %}
-            <button type="submit" class="nav-btn-outline">Log out</button>
-        </form>
 
     </div>
 </div>
 
-<!-- ── HERO ── -->
 <div class="hero">
     <div class="hero-tag">
         <i class="ti ti-calendar-event" style="font-size:12px;"></i>
@@ -458,14 +462,12 @@
     <p>Browse concerts, bazaars, tournaments and more — all happening around campus.</p>
 </div>
 
-<!-- ── MAIN ── -->
 <div class="main">
 
     {% if request.GET.q %}
         <p class="query-result">Showing results for: <b>"{{ request.GET.q }}"</b></p>
     {% endif %}
 
-    <!-- ONGOING -->
     <div class="section-header">
         <div class="section-dot dot-ongoing"></div>
         <div class="section-title">Ongoing</div>
@@ -499,7 +501,6 @@
 
     <hr class="section-divider">
 
-    <!-- UPCOMING -->
     <div class="section-header">
         <div class="section-dot dot-upcoming"></div>
         <div class="section-title">Upcoming</div>
@@ -533,7 +534,6 @@
 
     <hr class="section-divider">
 
-    <!-- PAST -->
     <div class="section-header">
         <div class="section-dot dot-past"></div>
         <div class="section-title">Past</div>

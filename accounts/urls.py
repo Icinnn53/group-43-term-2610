@@ -14,3 +14,4 @@ urlpatterns = [
     path('profile/stall/approve/<int:stall_id>/', views.approve_stall_view, name='approve_stall'),
     path('profile/stall/reject/<int:stall_id>/', views.reject_stall_view, name='reject_stall'),
 ]
+]

@@ -23,7 +23,8 @@ from owner.models import Owner, Stall
 def event_list(request):
 
     query = request.GET.get("q")
-    events = Event.objects.all()
+    # FIX: Only fetch approved events so pending ones don't throw off the count statistics
+    events = Event.objects.filter(status="approved")
 
     if query:
         events = events.filter(
@@ -333,10 +334,10 @@ def cancel_registration(request, event_id):
 
     event = get_object_or_404(Event, id=event_id)
 
-    reg = EventRegistration.objects.filter(user=request.user, event=event).first()
+    get_reg = EventRegistration.objects.filter(user=request.user, event=event).first()
 
-    if request.method == "POST" and reg:
-        reg.delete()
+    if request.method == "POST" and get_reg:
+        get_reg.delete()
         messages.success(request, "Registration cancelled.")
         return redirect("event_detail", event_id=event_id)
 
@@ -351,10 +352,10 @@ def cancel_vendor_registration(request, event_id):
 
     event = get_object_or_404(Event, id=event_id)
 
-    reg = VendorRegistration.objects.filter(user=request.user, event=event).first()
+    get_reg = VendorRegistration.objects.filter(user=request.user, event=event).first()
 
-    if request.method == "POST" and reg:
-        reg.delete()
+    if request.method == "POST" and get_reg:
+        get_reg.delete()
         messages.success(request, "Vendor registration cancelled.")
         return redirect("event_detail", event_id=event_id)
 

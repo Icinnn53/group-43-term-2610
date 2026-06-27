@@ -17,7 +17,9 @@ def pending_requests_badge(request):
     if request.user.role == 'admin':
         pending_organizers = CustomUser.objects.filter(role='student', is_organizer_requested=True).count()
         pending_events = Event.objects.filter(status='pending').count()
-        pending_vendors = Stall.objects.filter(is_active=False).count()
+        # FIX: Only count pending vendors for events that are approved/active, matching the dashboard view
+        pending_vendors = Stall.objects.filter(is_active=False, event__status='approved').count()
+        
     elif request.user.role == 'organizer':
         pending_vendors = Stall.objects.filter(is_active=False, event__organizer=request.user).count()
 

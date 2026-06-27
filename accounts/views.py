@@ -36,13 +36,46 @@ def logout_view(request):
         return redirect('login')
     return render(request, 'accounts/logout_confirm.html')
 
-#adminview
+# Profile View
 @login_required
 def profile_view(request):
-    context = {'user': request.user}
+    user = request.user
+    
+    # Dynamically fetch events and stalls managed/owned by the logged-in user
+    my_events = Event.objects.filter(organizer=user)
+    
+    # Uses double underscores to look up the CustomUser instance through the Owner model
+    my_stalls = Stall.objects.filter(owner__user=user)
+
+    # Calculate total_pending_count to match dashboard filter rules exactly
+    total_pending_count = 0
+    if user.role == 'admin':
+        pending_organizers = CustomUser.objects.filter(role='student', is_organizer_requested=True).count()
+        pending_events = Event.objects.filter(status='pending').count()
+        pending_vendors = Stall.objects.filter(is_active=False).exclude(status='rejected').count()
+        total_pending_count = pending_organizers + pending_events + pending_vendors
+    elif user.role == 'organizer':
+        pending_vendors = Stall.objects.filter(is_active=False, event__organizer=user).exclude(status='rejected').count()
+        total_pending_count = pending_vendors
+
+    context = {
+        'user': user,
+        'my_events': my_events,
+        'my_stalls': my_stalls,
+        'total_pending_count': total_pending_count, 
+    }
     return render(request, 'accounts/profile.html', context)
 
-#requestorganizer
+# Delete Event View (Added to handle delete request from profile layout)
+@login_required
+def delete_event_view(request, event_id):
+    if request.method == 'POST':
+        event = get_object_or_404(Event, id=event_id, organizer=request.user)
+        event.delete()
+        messages.success(request, "Event successfully deleted.")
+    return redirect('profile')
+
+# Request Organizer Role
 @login_required
 def request_organizer_view(request):
     if request.method == 'POST':
@@ -57,7 +90,7 @@ def request_organizer_view(request):
         return redirect('profile')
     return redirect('profile')
 
-#approveorganizer
+# Approve Organizer Request
 @login_required
 def approve_organizer_view(request, user_id):
     if request.user.role != 'admin':
@@ -74,7 +107,7 @@ def approve_organizer_view(request, user_id):
    
     return redirect('pending_requests')
 
-#rejectorganizer
+# Reject Organizer Request
 @login_required
 def reject_organizer_view(request, user_id):
     if request.user.role != 'admin':
@@ -90,6 +123,7 @@ def reject_organizer_view(request, user_id):
    
     return redirect('pending_requests')
 
+# Pending Requests Dashboard
 @login_required
 def pending_requests_view(request):
     context = {}
@@ -104,7 +138,7 @@ def pending_requests_view(request):
         return redirect('home')
     return render(request, 'accounts/pending_requests.html', context)
 
-#Approve Event View
+# Approve Event View
 @login_required
 def approve_event_view(request, event_id):
     if request.user.role != 'admin':
@@ -117,7 +151,7 @@ def approve_event_view(request, event_id):
         messages.success(request, f"Event '{event.title}' has been successfully approved and is live!")
     return redirect('pending_requests')
 
-#Reject Event View
+# Reject Event View
 @login_required
 def reject_event_view(request, event_id):
     if request.user.role != 'admin':
@@ -130,7 +164,7 @@ def reject_event_view(request, event_id):
         messages.warning(request, f"Event '{event.title}' request was rejected.")
     return redirect('pending_requests')
 
-#View Pending Event Full Details
+# View Pending Event Full Details
 @login_required
 def pending_event_detail_view(request, event_id):
     if request.user.role != 'admin':
@@ -139,7 +173,7 @@ def pending_event_detail_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'accounts/pending_event_detail.html', {'event': event})
 
-#Approve Stall View
+# Approve Stall View
 @login_required
 def approve_stall_view(request, stall_id):
     if request.user.role not in ['admin', 'organizer']:
@@ -153,7 +187,7 @@ def approve_stall_view(request, stall_id):
         messages.success(request, f"Stall '{stall.name}' space has been successfully approved!")
     return redirect('pending_requests')
 
-#Reject Stall View
+# Reject Stall View
 @login_required
 def reject_stall_view(request, stall_id):
     if request.user.role not in ['admin', 'organizer']:
@@ -167,7 +201,7 @@ def reject_stall_view(request, stall_id):
         messages.warning(request, "Stall application was rejected.")
     return redirect('pending_requests')
 
-#View Pending Stall Full Details
+# View Pending Stall Full Details
 @login_required
 def pending_stall_detail_view(request, stall_id):
     if request.user.role not in ['admin', 'organizer']:

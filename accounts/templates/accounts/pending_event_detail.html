@@ -1,67 +1,266 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Event Application - {{ event.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
-        .topbar { background: #004a99; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background: white; color: #004a99; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.2s; }
-        .btn:hover { background: #e6f0fa; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #080b14; 
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Sleek Modern Top Nav Bar */
+        .topbar { 
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 16px 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .topbar h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn { 
+            background: rgba(255, 255, 255, 0.05); 
+            color: #f1f5f9; 
+            padding: 8px 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-size: 13px; 
+            font-weight: 500; 
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s; 
+        }
         
-        .container { max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .btn:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
         
-        .header-section { border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
-        .badge { display: inline-block; background: #fef3c7; color: #d97706; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
-        h2 { margin: 0; color: #004a99; font-size: 28px; }
+        /* Glassmorphism Main Content Panel */
+        .container { 
+            max-width: 850px; 
+            margin: 40px auto; 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
+        }
         
-        .info-grid { display: grid; grid-template-columns: 180px 1fr; gap: 20px; font-size: 16px; align-items: baseline; }
-        .label { font-weight: 600; color: #475569; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
-        .value { color: #1e293b; line-height: 1.5; }
+        .header-section { 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06); 
+            padding-bottom: 24px; 
+            margin-bottom: 32px; 
+        }
+
+        /* Gold status pill matching design patterns */
+        .badge { 
+            display: inline-flex; 
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 158, 11, 0.1); 
+            color: #f59e0b; 
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 4px 12px; 
+            border-radius: 100px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em;
+            margin-bottom: 12px; 
+        }
+
+        h2 { 
+            margin: 0; 
+            color: #fff; 
+            font-size: 26px; 
+            font-weight: 600;
+        }
         
-        .description-card { background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #004a99; margin-top: 5px; line-height: 1.6; color: #334155; }
+        /* Modern Info-item Rows */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 180px 1fr; 
+            gap: 24px; 
+            font-size: 15px; 
+            align-items: baseline; 
+        }
+
+        .label { 
+            font-weight: 600; 
+            color: rgba(255, 255, 255, 0.4); 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            letter-spacing: 0.08em; 
+        }
+
+        .value { 
+            color: #f1f5f9; 
+            line-height: 1.6; 
+        }
+
+        .organizer-email {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 14px;
+        }
+
+        /* Custom Category Pill */
+        .category-chip {
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            font-weight: 500;
+            color: #cbd5e1;
+        }
         
-        .image-container { margin-top: 15px; border-radius: 8px; overflow: hidden; max-width: 100%; border: 1px solid #e2e8f0; max-height: 380px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; }
-        .event-img { max-width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+        /* Description Nested Blocks */
+        .description-card { 
+            background: rgba(255, 255, 255, 0.01); 
+            padding: 20px; 
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #6366f1; 
+            line-height: 1.6; 
+            color: #cbd5e1; 
+        }
         
-        .footer-actions { display: flex; justify-content: flex-end; gap: 15px; border-top: 2px solid #e2e8f0; padding-top: 25px; margin-top: 35px; }
-        .approve-btn { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
-        .approve-btn:hover { background: #059669; }
-        .reject-btn { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2); }
-        .reject-btn:hover { background: #dc2626; }
+        /* Image Display Grid Block */
+        .image-container { 
+            margin-top: 8px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            max-width: 100%; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            max-height: 400px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(0, 0, 0, 0.2); 
+        }
+
+        .event-img { 
+            max-width: 100%; 
+            height: auto; 
+            max-height: 400px; 
+            object-fit: cover; 
+        }
         
-        hr { border: 0; height: 1px; background: #e2e8f0; margin: 20px 0; }
+        /* Glowing Accent Footer Actions */
+        .footer-actions { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 16px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.06); 
+            padding-top: 28px; 
+            margin-top: 40px; 
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 14px; 
+            transition: all 0.2s; 
+        }
+
+        .approve-btn { 
+            background: rgba(34, 197, 94, 0.12); 
+            color: #86efac; 
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.05); 
+        }
+
+        .approve-btn:hover { 
+            background: rgba(34, 197, 94, 0.22); 
+            color: #fff;
+            border-color: rgba(34, 197, 94, 0.3);
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15); 
+        }
+
+        .reject-btn { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: #fca5a5; 
+            border: 1px solid rgba(239, 68, 68, 0.18);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.03); 
+        }
+
+        .reject-btn:hover { 
+            background: rgba(239, 68, 68, 0.2); 
+            color: #fff;
+            border-color: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15); 
+        }
     </style>
 </head>
 <body>
 
     <div class="topbar">
-        <h1>Event Verification Center</h1>
-        <a href="{% url 'pending_requests' %}" class="btn">Back to Dashboard</a>
+        <h1><i class="ti ti-shield-check"></i> Event Verification Center</h1>
+        <a href="{% url 'pending_requests' %}" class="btn">
+            <i class="ti ti-arrow-left"></i> Back to Dashboard
+        </a>
     </div>
 
     <div class="container">
         <div class="header-section">
-            <span class="badge">Awaiting Authorization</span>
+            <span class="badge"><i class="ti ti-clock-hour-4"></i> Awaiting Authorization</span>
             <h2>{{ event.title }}</h2>
         </div>
         
         <div class="info-grid">
             <div class="label">Organizer Details</div>
-            <div class="value"><strong>{{ event.organizer.username }}</strong> &nbsp;|&nbsp; <span style="color: #64748b;">{{ event.organizer.email }}</span></div>
+            <div class="value">
+                <strong>{{ event.organizer.username }}</strong> 
+                <span style="margin: 0 8px; color: rgba(255,255,255,0.15);">|</span> 
+                <span class="organizer-email">{{ event.organizer.email }}</span>
+            </div>
             
             <div class="label">Target Venue</div>
             <div class="value">{{ event.location }}</div>
             
             <div class="label">Event Category</div>
-            <div class="value"><span style="background: #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 14px; font-weight: 500;">{{ event.event_type }}</span></div>
+            <div class="value">
+                <span class="category-chip">{{ event.event_type }}</span>
+            </div>
             
             <div class="label">Timeline Schedule</div>
             <div class="value">
                 <strong>Starts:</strong> {{ event.start_date }} at {{ event.start_time }} <br>
-                <span style="margin-top: 4px; display: inline-block;"><strong>Ends:</strong> {{ event.end_date }} at {{ event.end_time }}</span>
+                <span style="margin-top: 6px; display: inline-block;"><strong>Ends:</strong> {{ event.end_date }} at {{ event.end_time }}</span>
             </div>
             
-            <div class="label" style="grid-column: 1 / -1; margin-top: 10px;">Event Overview & Details</div>
+            <div class="label" style="grid-column: 1 / -1; margin-top: 8px;">Event Overview & Details</div>
             <div class="value" style="grid-column: 1 / -1;">
                 <div class="description-card">
                     {{ event.description|linebreaks }}
@@ -69,7 +268,7 @@
             </div>
 
             {% if event.image %}
-            <div class="label" style="grid-column: 1 / -1; margin-top: 15px;">Uploaded Event Banner Image</div>
+            <div class="label" style="grid-column: 1 / -1; margin-top: 12px;">Uploaded Event Banner Image</div>
             <div class="value" style="grid-column: 1 / -1;">
                 <div class="image-container">
                     <img src="{{ event.image.url }}" alt="Event promotional banner asset" class="event-img">
@@ -81,12 +280,16 @@
         <div class="footer-actions">
             <form action="{% url 'reject_event' event.id %}" method="POST" style="margin: 0;">
                 {% csrf_token %}
-                <button type="submit" class="reject-btn">Reject</button>
+                <button type="submit" class="reject-btn">
+                    <i class="ti ti-x"></i> Reject
+                </button>
             </form>
 
             <form action="{% url 'approve_event' event.id %}" method="POST" style="margin: 0;">
                 {% csrf_token %}
-                <button type="submit" class="approve-btn">Approve</button>
+                <button type="submit" class="approve-btn">
+                    <i class="ti ti-check"></i> Approve
+                </button>
             </form>
         </div>
     </div>
