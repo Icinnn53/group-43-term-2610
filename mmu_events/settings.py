@@ -1,13 +1,28 @@
+import os
 from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-3c(xh+skvtbs=jmi9^m6p5s%^o_y^(*7*44v-e8zl3(nzh0ysv'
+# =========================
+# SECURITY
+# =========================
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-3c(xh+skvtbs=jmi9^m6p5s%^o_y^(*7*44v-e8zl3(nzh0ysv'
+)
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'mmu-pop-up-stall-ecosystem-platform.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://mmu-pop-up-stall-ecosystem-platform.onrender.com',
+]
 
 
 # =========================
