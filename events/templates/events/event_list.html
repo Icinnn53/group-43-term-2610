@@ -555,8 +555,6 @@
         <a href="{% url 'stall_list' %}" class="nav-link">Stalls</a>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
-
             <div class="profile-badge">
                 <a href="{% url 'profile' %}" class="nav-link">
                     <i class="ti ti-user" style="font-size:15px;"></i> Profile
@@ -617,8 +615,6 @@
     <a href="{% url 'stall_list' %}" class="nav-link">Stalls</a>
 
     {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
-
         <a href="{% url 'profile' %}" class="nav-link">
             <i class="ti ti-user" style="font-size:15px;"></i> Profile
             {% if total_pending_count > 0 %}

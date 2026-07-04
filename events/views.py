@@ -85,22 +85,6 @@ def event_detail(request, event_id):
         "now": timezone.now(),
     })
 
-
-# =========================================================
-# DASHBOARD
-# =========================================================
-@login_required
-def dashboard(request):
-
-    registrations = EventRegistration.objects.select_related("event").filter(
-        user=request.user
-    )
-
-    return render(request, "events/dashboard.html", {
-        "registrations": registrations
-    })
-
-
 # =========================================================
 # CREATE EVENT SELECT
 # =========================================================
@@ -206,6 +190,11 @@ def register_event(request, event_id):
         messages.warning(request, "Already registered.")
         return redirect("event_detail", event_id=event_id)
 
+    # --- NEW: pre-fill known account details on every registration form ---
+    full_name = request.user.get_full_name() or request.user.username
+    contact_email = request.user.email
+    contact_phone = getattr(request.user, "phone_number", "")
+
     if event.event_type == "tournament":
 
         class TournamentForm(forms.Form):
@@ -225,7 +214,11 @@ def register_event(request, event_id):
             team_member_10 = forms.CharField(label="Team Member 10", required=False)
             team_member_11 = forms.CharField(label="Team Member 11", required=False)
 
-        form = TournamentForm(request.POST or None)
+        form = TournamentForm(request.POST or None, initial={
+            "full_name": full_name,
+            "email": contact_email,
+            "phone_number": contact_phone,
+        })
 
     else:
         form_class = {
@@ -233,7 +226,17 @@ def register_event(request, event_id):
             "bazaar": BazaarRegistrationForm,
         }.get(event.event_type, ConcertRegistrationForm)
 
-        form = form_class(request.POST or None)
+        initial = {
+            "full_name": full_name,
+            "email": contact_email,
+        }
+        # Concert form uses "phone_number", Bazaar form uses "contact_number"
+        if event.event_type == "bazaar":
+            initial["contact_number"] = contact_phone
+        else:
+            initial["phone_number"] = contact_phone
+
+        form = form_class(request.POST or None, initial=initial)
 
     if request.method == "POST" and form.is_valid():
 
@@ -319,7 +322,12 @@ def register_vendor(request, event_id):
         messages.warning(request, "Already registered as vendor.")
         return redirect("event_detail", event_id=event_id)
 
-    form = VendorRegistrationForm(request.POST or None)
+    # --- NEW: pre-fill known account details ---
+    form = VendorRegistrationForm(request.POST or None, initial={
+        "full_name": request.user.get_full_name() or request.user.username,
+        "email": request.user.email,
+        "contact_number": getattr(request.user, "phone_number", ""),
+    })
 
     if request.method == "POST" and form.is_valid():
 
@@ -329,16 +337,32 @@ def register_vendor(request, event_id):
             data=form.cleaned_data
         )
 
-        owner, _ = Owner.objects.get_or_create(
+        owner, owner_created = Owner.objects.get_or_create(
             user=request.user,
-            defaults={"name": request.user.username}
+            defaults={
+                "name": form.cleaned_data.get("full_name"),
+                "phone": form.cleaned_data.get("contact_number", ""),
+                "social_media": form.cleaned_data.get("social_media", ""),
+                "description": form.cleaned_data.get("description", ""),
+            }
         )
+
+        # If this user already had an Owner record (e.g. from a previous
+        # stall), keep their contact details up to date with this
+        # registration's info instead of leaving the old/blank values.
+        if not owner_created:
+            owner.name = form.cleaned_data.get("full_name")
+            owner.phone = form.cleaned_data.get("contact_number", "")
+            owner.social_media = form.cleaned_data.get("social_media", "")
+            owner.description = form.cleaned_data.get("description", "")
+            owner.save()
 
         Stall.objects.get_or_create(
             event=event,
             owner=owner,
             defaults={
                 "name": form.cleaned_data.get("stall_name"),
+                "description": form.cleaned_data.get("item_selling", ""),
                 "location": event.location,
                 "capacity": 1,
                 "rental_fee": 0

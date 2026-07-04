@@ -505,26 +505,28 @@
         <div class="section-label">Actions</div>
         <div class="btn-area">
 
-            {% if is_registered %}
-                {% if registration.registration_status == "approved" %}
-                    <div class="btn-success-ghost">✔ Registration Approved</div>
-                {% elif registration.registration_status == "rejected" %}
-                    <div class="btn-rejected-ghost">✕ Registration Rejected</div>
-                {% else %}
-                    {% if registration.payment_required and not registration.payment_receipt %}
-                        <a href="{% url 'payment' event.id %}" class="btn-primary-purple">→ Upload Payment Receipt</a>
+            {% if event.event_type != 'bazaar' %}
+                {% if is_registered %}
+                    {% if registration.registration_status == "approved" %}
+                        <div class="btn-success-ghost">✔ Registration Approved</div>
+                    {% elif registration.registration_status == "rejected" %}
+                        <div class="btn-rejected-ghost">✕ Registration Rejected</div>
                     {% else %}
-                        <div class="btn-pending-ghost">⏳ Pending Approval</div>
+                        {% if registration.payment_required and not registration.payment_receipt %}
+                            <a href="{% url 'payment' event.id %}" class="btn-primary-purple">→ Upload Payment Receipt</a>
+                        {% else %}
+                            <div class="btn-pending-ghost">⏳ Pending Approval</div>
+                        {% endif %}
                     {% endif %}
+                    <form method="POST" action="{% url 'cancel_registration' event.id %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-danger-ghost">✕ Cancel Attendee</button>
+                    </form>
+                {% elif event.is_past %}
+                    <div class="btn-rejected-ghost">⏱ Registration Closed — Event Ended</div>
+                {% elif not event.is_full %}
+                    <a href="{% url 'register_event' event.id %}" class="btn-primary-purple">→ Register as Attendee</a>
                 {% endif %}
-                <form method="POST" action="{% url 'cancel_registration' event.id %}" class="inline-form">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-danger-ghost">✕ Cancel Attendee</button>
-                </form>
-            {% elif event.is_past %}
-                <div class="btn-rejected-ghost">⏱ Registration Closed — Event Ended</div>
-            {% elif not event.is_full %}
-                <a href="{% url 'register_event' event.id %}" class="btn-primary-purple">→ Register as Attendee</a>
             {% endif %}
 
             {% if event.allow_vendors_collaborators %}
@@ -537,7 +539,7 @@
                 {% elif event.is_past %}
                     <div class="btn-rejected-ghost">⏱ Vendor Registration Closed</div>
                 {% else %}
-                    <a href="{% url 'register_vendor' event.id %}" class="btn-ghost">Register as Vendor</a>
+                    <a href="{% url 'register_vendor' event.id %}" class="btn-warn">Register as Vendor</a>
                 {% endif %}
             {% endif %}
 

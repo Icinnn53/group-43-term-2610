@@ -264,6 +264,26 @@
             gap: 8px;
         }
 
+        .btn-view {
+            background: rgba(6,182,212,0.12);
+            color: #67e8f9;
+            border: 1px solid rgba(6,182,212,0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-view:hover {
+            background: rgba(6,182,212,0.22);
+            color: #fff;
+        }
+
         .btn-edit {
             background: rgba(99,102,241,0.12);
             color: #a5b4fc;
@@ -517,6 +537,9 @@
                                 </span>
                             </div>
                             <div class="item-actions-group">
+                                <a href="{% url 'event_detail' event_id=event.id %}" class="btn-view">
+                                    <i class="ti ti-eye"></i> View
+                                </a>
                                 <a href="{% url 'edit_event' event_id=event.id %}" class="btn-edit">
                                     <i class="ti ti-edit"></i> Edit
                                 </a>
@@ -549,6 +572,9 @@
                                 </span>
                             </div>
                             <div class="item-actions-group">
+                                <a href="{% url 'stall_detail' id=stall.id %}" class="btn-view">
+                                    <i class="ti ti-eye"></i> View
+                                </a>
                                 <a href="{% url 'stall_edit' id=stall.id %}" class="btn-edit">
                                     <i class="ti ti-edit"></i> Edit
                                 </a>

@@ -3,45 +3,131 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Event</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #333;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
         }
 
         .container {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 20px;
+            max-width: 720px;
+            margin: 48px auto;
+            padding: 0 24px 80px;
         }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        h2 {
-            margin-bottom: 20px;
-            border-left: 5px solid #004a99;
-            padding-left: 10px;
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
         }
 
+        .page-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 32px;
+        }
+
+        .page-sub strong {
+            color: #a5b4fc;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        /* Style Django's {{ form.as_p }} output */
         form p {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
-        input, select, textarea {
+        form label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.5);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input, textarea, select {
             width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
             font-size: 14px;
-            box-sizing: border-box;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: rgba(99,102,241,0.5);
         }
 
         textarea {
@@ -49,67 +135,90 @@
             resize: vertical;
         }
 
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #6366f1;
+            display: inline-block;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
         .btn {
-            background: #004a99;
+            background: #6366f1;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
         }
 
         .btn:hover {
-            background: #003b7a;
+            background: #4f46e5;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 6px;
-            color: white;
-            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .top-info {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 15px;
+            background: rgba(255,255,255,0.07);
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
 
+<div class="navbar">
+    <a href="{% url 'home' %}" class="nav-logo">
+        <div class="logo-dot"></div>
+        MMU Events
+    </a>
+
+    <a href="{% url 'event_detail' event.id %}" class="nav-link">
+        <i class="ti ti-arrow-left"></i> Back
+    </a>
+</div>
+
 <div class="container">
 
-    <div class="card">
+    <div class="page-heading">Edit Event</div>
+    <div class="page-sub">Editing: <strong>{{ event.title }}</strong></div>
 
-        <h2>Edit Event</h2>
-
-        <div class="top-info">
-            Editing: <strong>{{ event.title }}</strong>
-        </div>
+    <div class="form-card">
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             {{ form.as_p }}
 
-            <button type="submit" class="btn">
-                Save Changes
-            </button>
+            <div class="form-actions">
+                <button type="submit" class="btn">
+                    Save Changes
+                </button>
 
-            <a href="{% url 'event_detail' event.id %}" class="btn-secondary">
-                Cancel
-            </a>
+                <a href="{% url 'event_detail' event.id %}" class="btn-secondary">
+                    Cancel
+                </a>
+            </div>
         </form>
 
     </div>

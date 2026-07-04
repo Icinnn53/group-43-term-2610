@@ -77,23 +77,23 @@
     <p><b>Capacity:</b> {{ stall.capacity }}</p>
     <p><b>Fee:</b> RM {{ stall.rental_fee }}</p>
 
-    {% if user.is_authenticated %}
-        {% if stall.event %}
-            {% if stall.event.organizer == user or stall.owner.user.id == user.id %}
-                <div style="display:flex; gap:10px; margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:flex; gap:10px; margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07);">
+        <a href="{% url 'product_by_stall' stall.id %}" class="btn">View Products</a>
+
+        {% if user.is_authenticated %}
+            {% if stall.event %}
+                {% if stall.event.organizer == user or stall.owner.user.id == user.id %}
                     <a href="{% url 'stall_edit' stall.id %}" class="btn">Edit</a>
                     <a href="{% url 'stall_delete' stall.id %}" class="btn btn-danger">Delete</a>
-                </div>
-            {% endif %}
-        {% else %}
-            {% if stall.owner.user.id == user.id %}
-                <div style="display:flex; gap:10px; margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07);">
+                {% endif %}
+            {% else %}
+                {% if stall.owner.user.id == user.id %}
                     <a href="{% url 'stall_edit' stall.id %}" class="btn">Edit</a>
                     <a href="{% url 'stall_delete' stall.id %}" class="btn btn-danger">Delete</a>
-                </div>
+                {% endif %}
             {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 
 </div>
 

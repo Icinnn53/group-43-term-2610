@@ -36,7 +36,6 @@ urlpatterns = [
 
     # ================= EVENTS =================
     path('home/', event_views.event_list, name='home'),
-    path('dashboard/', event_views.dashboard, name='dashboard'),
 
     path('event/create/', event_views.create_event_select, name='create_event_select'),
     path('event/create/<str:event_type>/', event_views.create_event, name='create_event'),

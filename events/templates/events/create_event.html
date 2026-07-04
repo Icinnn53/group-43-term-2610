@@ -158,6 +158,20 @@
             accent-color: #6366f1;
         }
 
+        .checkbox-row.locked {
+            opacity: 0.7;
+        }
+
+        .checkbox-row.locked input[type="checkbox"] {
+            cursor: not-allowed;
+        }
+
+        .locked-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            margin-left: auto;
+        }
+
         #feeBox, #bankBox {
             display: none;
             margin-top: 8px;
@@ -252,14 +266,17 @@
             <div class="section">
                 <div class="section-label">Settings</div>
 
-                <div class="checkbox-row">
+                <div class="checkbox-row {% if event_type == 'bazaar' %}locked{% endif %}" id="vendorRow">
                     {{ form.allow_vendors_collaborators }}
-                    <label>Allow vendors/collaborators</label>
+                    <label style="margin-bottom:0;">Allow vendors/collaborators</label>
+                    {% if event_type == 'bazaar' %}
+                        <span class="locked-hint">Required for bazaar events</span>
+                    {% endif %}
                 </div>
 
                 <div class="checkbox-row">
                     {{ form.enable_registration_fee }}
-                    <label>Enable registration fee</label>
+                    <label style="margin-bottom:0;">Enable registration fee</label>
                 </div>
 
                 <div id="feeBox">
@@ -296,7 +313,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const feeToggle = document.getElementById("enableFee");
+    const feeToggle = document.getElementById("id_enable_registration_fee");
     const feeBox = document.getElementById("feeBox");
     const bankBox = document.getElementById("bankBox");
 
@@ -314,6 +331,20 @@ document.addEventListener("DOMContentLoaded", function () {
         feeToggle.addEventListener("change", update);
         update();
     }
+
+    {% if event_type == 'bazaar' %}
+    const vendorCheckbox = document.getElementById("id_allow_vendors_collaborators");
+    if (vendorCheckbox) {
+        // Force it checked on load
+        vendorCheckbox.checked = true;
+
+        // Prevent unchecking
+        vendorCheckbox.addEventListener("click", function (e) {
+            e.preventDefault();
+            vendorCheckbox.checked = true;
+        });
+    }
+    {% endif %}
 
 });
 </script>

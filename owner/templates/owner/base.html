@@ -283,7 +283,6 @@
     <a href="{% url 'home' %}"><i class="ti ti-home" style="font-size:14px;margin-right:4px;"></i>Home</a>
     <a href="{% url 'owner_list' %}"><i class="ti ti-users" style="font-size:14px;margin-right:4px;"></i>Owners</a>
     <a href="{% url 'stall_list' %}"><i class="ti ti-building-store" style="font-size:14px;margin-right:4px;"></i>Stalls</a>
-    <a href="{% url 'dashboard' %}"><i class="ti ti-layout-dashboard" style="font-size:14px;margin-right:4px;"></i>Dashboard</a>
 
     {% if user.is_authenticated and user.role != "student" %}
         <a href="{% url 'stall_create' %}" class="add-btn">

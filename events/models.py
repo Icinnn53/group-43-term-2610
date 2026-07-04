@@ -101,9 +101,14 @@ class Event(models.Model):
     # HELPERS
     # =====================================================
     def total_registrations(self):
-        return self.registrations.filter(
+        count = self.registrations.filter(
             registration_status="approved"
         ).count()
+        # Bazaar events count approved vendor sign-ups toward the
+        # total/registration cap as well as attendees.
+        if self.event_type == "bazaar":
+            count += self.vendor_registrations.count()
+        return count
 
     def is_full(self):
         if not self.max_registrations:
