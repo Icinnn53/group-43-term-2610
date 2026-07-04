@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register as Vendor – {{ event.title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
@@ -197,6 +198,13 @@
         .cancel-btn:hover {
             background: rgba(255,255,255,0.08);
             color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .navbar { padding: 14px 20px; }
+            .container { margin: 28px auto; padding: 0 16px 60px; }
+            .form-card { padding: 22px; }
+            .btn-area { flex-direction: column; }
         }
     </style>
 </head>
