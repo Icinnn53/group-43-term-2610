@@ -100,7 +100,6 @@ class EventForm(forms.ModelForm):
             'description',
             'location',
             'image',
-            'event_type',
             'allow_vendors_collaborators',
             'max_registrations',
             'enable_registration_fee',
@@ -114,7 +113,6 @@ class EventForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'location': forms.TextInput(attrs={'class': 'form-control'}),
-            'event_type': forms.Select(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
@@ -206,11 +204,64 @@ class TournamentRegistrationForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control'})
     )
 
-    player_1 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    player_2 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    player_3 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    player_4 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    substitute_player = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # -------------------------
+    # 11 hardcoded team member fields
+    # -------------------------
+    team_member_1 = forms.CharField(
+        label="Team Member 1",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_2 = forms.CharField(
+        label="Team Member 2",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_3 = forms.CharField(
+        label="Team Member 3",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_4 = forms.CharField(
+        label="Team Member 4",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_5 = forms.CharField(
+        label="Team Member 5",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_6 = forms.CharField(
+        label="Team Member 6",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_7 = forms.CharField(
+        label="Team Member 7",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_8 = forms.CharField(
+        label="Team Member 8",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_9 = forms.CharField(
+        label="Team Member 9",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_10 = forms.CharField(
+        label="Team Member 10",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    team_member_11 = forms.CharField(
+        label="Team Member 11",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
     additional_notes = forms.CharField(
         required=False,

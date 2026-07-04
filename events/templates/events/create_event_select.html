@@ -2,95 +2,202 @@
 <html>
 <head>
     <title>Select Event Type</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: Arial, sans-serif;
-            background: #eef2f7;
-            margin: 0;
+            background: #080b14;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+        }
+
+        /* ── PAGE ── */
+        .page-wrap {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: calc(100vh - 65px);
+            padding: 24px;
         }
 
-        .card {
-            background: white;
-            padding: 35px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            width: 360px;
+        .container {
+            max-width: 380px;
+            width: 100%;
+        }
+
+        .page-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .page-heading::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+
+        .page-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 28px;
             text-align: center;
         }
 
-        h2 {
-            margin-bottom: 20px;
-            color: #222;
+        .form-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.5);
+            display: block;
+            margin-bottom: 6px;
         }
 
         select {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #d9d9d9;
-            background: #fafafa;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
             font-size: 14px;
             margin-bottom: 20px;
+            outline: none;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' fill-opacity='0.4' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
         }
 
         select:focus {
-            outline: none;
-            border-color: #004a99;
-            background: white;
+            border-color: #6366f1;
         }
 
-        button {
+        select option {
+            background: #10131e;
+            color: #e2e8f0;
+        }
+
+        .submit-btn {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             border: none;
             border-radius: 10px;
-            background: #004a99;
+            background: #6366f1;
             color: white;
-            font-size: 15px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #003a7a;
-        }
+        .submit-btn:hover { background: #5457e5; }
 
         .note {
             font-size: 12px;
-            color: #777;
-            margin-top: 10px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 14px;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="navbar">
+    <a href="{% url 'home' %}" class="nav-logo">
+        <div class="logo-dot"></div>
+        MMU Events
+    </a>
 
-    <h2>Select Event Type</h2>
+    <a href="{% url 'home' %}" class="nav-link">
+        <i class="ti ti-arrow-left"></i> Back
+    </a>
+</div>
 
-    <form method="POST">
-        {% csrf_token %}
+<div class="page-wrap">
+    <div class="container">
 
-        <select name="event_type">
-            <option value="concert">🎤 Concert</option>
-            <option value="tournament">🏆 Tournament</option>
-            <option value="bazaar">🛍️ Bazaar</option>
-        </select>
+        <div class="page-heading">Select Event Type</div>
+        <div class="page-sub">Choose the type of event you want to create</div>
 
-        <button type="submit">Continue</button>
+        <div class="form-card">
+            <form method="POST">
+                {% csrf_token %}
 
-        <div class="note">
-            Choose the type of event you want to create
+                <label>Event Type</label>
+                <select name="event_type">
+                    <option value="concert">🎤 Concert</option>
+                    <option value="tournament">🏆 Tournament</option>
+                    <option value="bazaar">🛍️ Bazaar</option>
+                </select>
+
+                <button type="submit" class="submit-btn">Continue</button>
+            </form>
         </div>
-    </form>
 
+    </div>
 </div>
 
 </body>

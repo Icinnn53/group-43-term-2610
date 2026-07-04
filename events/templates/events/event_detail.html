@@ -212,6 +212,18 @@
             padding: 5px 14px;
             border-radius: 999px;
         }
+        .ended-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.55);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 5px 14px;
+            border-radius: 999px;
+        }
 
         .btn-area {
             display: flex;
@@ -420,7 +432,9 @@
                 <div class="reg-bar-fill" style="width: {% widthratio event.total_registrations event.max_registrations 100 %}%"></div>
             </div>
             {% endif %}
-            {% if event.is_full %}
+            {% if event.is_past %}
+            <div class="ended-pill">⏱ Event Ended</div>
+            {% elif event.is_full %}
             <div class="full-pill">🚫 Full</div>
             {% endif %}
         </div>
@@ -469,6 +483,8 @@
                     {% csrf_token %}
                     <button type="submit" class="btn-danger-ghost">✕ Cancel Attendee</button>
                 </form>
+            {% elif event.is_past %}
+                <div class="btn-rejected-ghost">⏱ Registration Closed — Event Ended</div>
             {% elif not event.is_full %}
                 <a href="{% url 'register_event' event.id %}" class="btn-primary-purple">→ Register as Attendee</a>
             {% endif %}
@@ -480,6 +496,8 @@
                         {% csrf_token %}
                         <button type="submit" class="btn-danger-ghost">✕ Cancel Vendor</button>
                     </form>
+                {% elif event.is_past %}
+                    <div class="btn-rejected-ghost">⏱ Vendor Registration Closed</div>
                 {% else %}
                     <a href="{% url 'register_vendor' event.id %}" class="btn-ghost">Register as Vendor</a>
                 {% endif %}

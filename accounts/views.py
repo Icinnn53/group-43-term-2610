@@ -138,11 +138,17 @@ def pending_requests_view(request):
         context['pending_registrations'] = EventRegistration.objects.filter(
             registration_status='pending'
         ).select_related('event', 'user')
+        context['all_registrations'] = EventRegistration.objects.select_related(
+            'event', 'user'
+        ).order_by('-registered_at')
     elif request.user.role == 'organizer':
         context['pending_vendors'] = Stall.objects.filter(is_active=False, event__organizer=request.user).exclude(status='rejected')
         context['pending_registrations'] = EventRegistration.objects.filter(
             event__organizer=request.user, registration_status='pending'
         ).select_related('event', 'user')
+        context['all_registrations'] = EventRegistration.objects.filter(
+            event__organizer=request.user
+        ).select_related('event', 'user').order_by('-registered_at')
     else:
         messages.error(request, "Access Denied.")
         return redirect('home')

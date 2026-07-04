@@ -173,6 +173,7 @@
             border: 1px solid rgba(255,255,255,0.07);
             border-radius: 14px;
             overflow: hidden;
+            overflow-x: auto;
         }
 
         table {
@@ -190,6 +191,7 @@
             color: rgba(255,255,255,0.3);
             border-bottom: 1px solid rgba(255,255,255,0.06);
             background: rgba(255,255,255,0.02);
+            white-space: nowrap;
         }
 
         td {
@@ -197,6 +199,7 @@
             font-size: 13px;
             color: rgba(255,255,255,0.7);
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            white-space: nowrap;
         }
 
         tr:last-child td { border-bottom: none; }
@@ -274,6 +277,35 @@
 
         .btn-reject:hover { background: rgba(239,68,68,0.22); }
 
+        /* ── STATUS PILLS (history tab) ── */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .status-approved {
+            background: rgba(34,197,94,0.12);
+            color: #86efac;
+            border: 1px solid rgba(34,197,94,0.2);
+        }
+
+        .status-rejected {
+            background: rgba(239,68,68,0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+
+        .status-pending {
+            background: rgba(245,158,11,0.12);
+            color: #fcd34d;
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+
         /* ── EMPTY STATE ── */
         .empty-state {
             text-align: center;
@@ -347,6 +379,13 @@
                 Registration Requests
                 {% if pending_registrations %}
                     <span class="tab-badge">{{ pending_registrations|length }}</span>
+                {% endif %}
+            </button>
+            <button class="nav-tab" onclick="switchTab('history-tab', this)">
+                <i class="ti ti-history" style="font-size:14px;"></i>
+                Registration History
+                {% if all_registrations %}
+                    <span class="tab-badge">{{ all_registrations|length }}</span>
                 {% endif %}
             </button>
         </div>
@@ -559,6 +598,71 @@
                 <div class="empty-state">
                     <i class="ti ti-ticket"></i>
                     No pending registration requests
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- ── REGISTRATION HISTORY (accounting / reference) ── -->
+        <div id="history-tab" class="tab-content">
+            {% if all_registrations %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Attendee</th>
+                                <th>Fee</th>
+                                <th>Receipt</th>
+                                <th>Status</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registration in all_registrations %}
+                            <tr>
+                                <td><strong>{{ registration.event.title }}</strong></td>
+                                <td>{{ registration.user.username }}</td>
+                                <td>
+                                    {% if registration.event.has_fee %}
+                                        RM{{ registration.event.registration_fee }}
+                                    {% else %}
+                                        Free
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registration.payment_receipt %}
+                                        <a href="{{ registration.payment_receipt.url }}" target="_blank" class="btn-details">
+                                            <i class="ti ti-receipt" style="font-size:12px;"></i> View
+                                        </a>
+                                    {% else %}
+                                        <span style="color: rgba(255,255,255,0.25);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registration.registration_status == 'approved' %}
+                                        <span class="status-pill status-approved">
+                                            <i class="ti ti-check" style="font-size:11px;"></i> Approved
+                                        </span>
+                                    {% elif registration.registration_status == 'rejected' %}
+                                        <span class="status-pill status-rejected">
+                                            <i class="ti ti-x" style="font-size:11px;"></i> Rejected
+                                        </span>
+                                    {% else %}
+                                        <span class="status-pill status-pending">
+                                            <i class="ti ti-clock" style="font-size:11px;"></i> Pending
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ registration.registered_at|date:"d M Y, H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="ti ti-history"></i>
+                    No registration history yet
                 </div>
             {% endif %}
         </div>

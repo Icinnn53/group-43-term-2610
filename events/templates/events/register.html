@@ -286,18 +286,6 @@
 
                 {% if event.event_type == "tournament" %}
 
-                    <div class="section-title">Team Information</div>
-
-                    <div class="field-group">
-                        <label>{{ form.team_name.label }}</label>
-                        {{ form.team_name }}
-                    </div>
-
-                    <div class="field-group">
-                        <label>{{ form.skill_level.label }}</label>
-                        {{ form.skill_level }}
-                    </div>
-
                     <div class="section-title">Captain Details</div>
 
                     <div class="field-group">
@@ -319,7 +307,7 @@
 
                     <div class="player-card">
                         {% for field in form %}
-                            {% if "player_" in field.name %}
+                            {% if "team_member_" in field.name %}
                                 <div class="field-group">
                                     <label>{{ field.label }}</label>
                                     {{ field }}

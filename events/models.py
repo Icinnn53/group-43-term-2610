@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 
 # =========================================================
@@ -115,6 +116,20 @@ class Event(models.Model):
             and self.registration_fee is not None
             and self.registration_fee > 0
         )
+
+    def is_past(self):
+        """
+        An event is considered 'past' once its end_date has passed.
+        Used to block new registrations for events that already happened.
+        """
+        return self.end_date < timezone.now()
+
+    def can_register(self):
+        """
+        Central place to decide if registration is currently allowed.
+        Combines the past-event check with the existing allow_registration flag.
+        """
+        return self.allow_registration and not self.is_past()
 
     def __str__(self):
         return self.title

@@ -189,6 +189,11 @@ def register_event(request, event_id):
 
     event = get_object_or_404(Event, id=event_id)
 
+    # --- NEW: block registration for past events ---
+    if event.is_past():
+        messages.error(request, "This event has already ended. Registration is closed.")
+        return redirect("event_detail", event_id=event_id)
+
     if event.status != "approved":
         messages.error(request, "Event not approved.")
         return redirect("event_detail", event_id=event_id)
@@ -208,10 +213,17 @@ def register_event(request, event_id):
             email = forms.EmailField()
             phone_number = forms.CharField()
 
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                for i in range(1, (event.team_size or 0) + 1):
-                    self.fields[f"player_{i}"] = forms.CharField()
+            team_member_1 = forms.CharField(label="Team Member 1", required=True)
+            team_member_2 = forms.CharField(label="Team Member 2", required=False)
+            team_member_3 = forms.CharField(label="Team Member 3", required=False)
+            team_member_4 = forms.CharField(label="Team Member 4", required=False)
+            team_member_5 = forms.CharField(label="Team Member 5", required=False)
+            team_member_6 = forms.CharField(label="Team Member 6", required=False)
+            team_member_7 = forms.CharField(label="Team Member 7", required=False)
+            team_member_8 = forms.CharField(label="Team Member 8", required=False)
+            team_member_9 = forms.CharField(label="Team Member 9", required=False)
+            team_member_10 = forms.CharField(label="Team Member 10", required=False)
+            team_member_11 = forms.CharField(label="Team Member 11", required=False)
 
         form = TournamentForm(request.POST or None)
 
@@ -293,6 +305,11 @@ def payment_view(request, event_id):
 def register_vendor(request, event_id):
 
     event = get_object_or_404(Event, id=event_id)
+
+    # --- NEW: block vendor registration for past events ---
+    if event.is_past():
+        messages.error(request, "This event has already ended. Vendor registration is closed.")
+        return redirect("event_detail", event_id=event_id)
 
     if not event.allow_vendors_collaborators:
         messages.error(request, "Vendor registration is disabled.")

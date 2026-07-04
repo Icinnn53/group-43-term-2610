@@ -1,80 +1,71 @@
 {% extends "products/base.html" %}
 
+{% block title %}Products{% endblock %}
+
 {% block content %}
 
-<h2>Product List</h2>
-
-{% if user.is_authenticated and user.role != "student" %}
-<a href="{% url 'product_create' %}">
-    + Add Product
-</a>
-{% endif %}
-
-{% for p in products %}
-<div class="card">
-
-    {% if p.product_image %}
-        <img src="{{ p.product_image.url }}"
-             alt="{{ p.name }}"
-             style="
-                width:140px;
-                height:140px;
-                object-fit:cover;
-                border-radius:10px;
-                margin-bottom:10px;
-             ">
-    {% else %}
-        <div style="
-            width:140px;
-            height:140px;
-            background:#eef0f3;
-            border-radius:10px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#777;
-            margin-bottom:10px;
-        ">
-            No Image
-        </div>
+<div class="page-header">
+    <div class="page-title">Products</div>
+    {% if user.is_authenticated and user.role != "student" %}
+        <a href="{% url 'product_create' %}" class="btn-primary-purple">+ Add product</a>
     {% endif %}
-
-    <h3>{{ p.name }}</h3>
-
-    <p><b>Price:</b> RM {{ p.price }}</p>
-
-    <p><b>Stock:</b> {{ p.stock_quantity }}</p>
-
-    {% if p.stock_quantity > 0 %}
-        <p>
-            <b>Status:</b>
-            <span style="color:green;">In Stock</span>
-        </p>
-    {% else %}
-        <p>
-            <b>Status:</b>
-            <span style="color:red;">Sold Out</span>
-        </p>
-    {% endif %}
-
-    <p>{{ p.description }}</p>
-
-    <p><b>Stall:</b> {{ p.stall.name }}</p>
-
-    <a href="{% url 'product_detail' p.id %}">
-        View
-    </a>
-
-    {% if user.role == "organizer" or p.stall.owner.user == user %}
-        <a href="{% url 'edit_product' p.id %}">
-            Edit
-        </a>
-    {% endif %}
-
 </div>
 
-{% empty %}
-<p>No products found.</p>
-{% endfor %}
+{% if products %}
+    <div class="product-grid">
+        {% for p in products %}
+        <div class="product-card">
+
+            {% if p.product_image %}
+                <img src="{{ p.product_image.url }}" alt="{{ p.name }}" class="product-img">
+            {% else %}
+                <div class="product-img-placeholder">No image</div>
+            {% endif %}
+
+            <div class="product-body">
+                <div class="product-name">{{ p.name }}</div>
+
+                {% if p.description %}
+                    <div class="product-desc">{{ p.description }}</div>
+                {% endif %}
+
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                    <div class="meta-row">
+                        <span class="meta-label">Price</span>
+                        <span class="meta-price">RM {{ p.price }}</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Stock</span>
+                        <span class="meta-value">{{ p.stock_quantity }}</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Status</span>
+                        {% if p.stock_quantity > 0 %}
+                            <span class="stock-pill stock-in">In stock</span>
+                        {% else %}
+                            <span class="stock-pill stock-out">Sold out</span>
+                        {% endif %}
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Stall</span>
+                        <span class="stall-tag">⊞ {{ p.stall.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-footer">
+                <a href="{% url 'product_detail' p.id %}" class="btn-primary-purple" style="flex:1; justify-content:center;">View →</a>
+                {% if user.role == "organizer" or p.stall.owner.user == user %}
+                    <a href="{% url 'edit_product' p.id %}" class="btn-ghost">Edit</a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="empty-state">No products found.</div>
+{% endif %}
 
 {% endblock %}
