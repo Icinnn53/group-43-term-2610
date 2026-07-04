@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <title>{{ event.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -234,6 +235,7 @@
         .btn-primary-purple {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 600;
@@ -252,6 +254,7 @@
         .btn-ghost {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -269,6 +272,7 @@
         .btn-danger-ghost {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -286,6 +290,7 @@
         .btn-success-ghost {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -300,6 +305,7 @@
         .btn-pending-ghost {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -314,6 +320,7 @@
         .btn-rejected-ghost {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -328,6 +335,7 @@
         .btn-warn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -345,6 +353,7 @@
         .btn-teal {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
             font-size: 14px;
             font-weight: 500;
@@ -363,9 +372,38 @@
 
         @media (max-width: 600px) {
             .topnav { padding: 16px 20px; }
+            .topnav-brand { font-size: 16px; }
+            .topnav-back { font-size: 12px; padding: 6px 12px; }
+
             .page-wrap { margin: 28px auto; padding: 0 16px 60px; }
             .glass-card { padding: 20px; }
             .date-grid { grid-template-columns: 1fr; gap: 16px; }
+
+            /* Stack action buttons full-width and vertically on small screens */
+            .btn-area {
+                flex-direction: column;
+            }
+
+            .btn-area > a,
+            .btn-area > div,
+            .btn-area > form.inline-form {
+                width: 100%;
+            }
+
+            .btn-primary-purple,
+            .btn-ghost,
+            .btn-danger-ghost,
+            .btn-success-ghost,
+            .btn-pending-ghost,
+            .btn-rejected-ghost,
+            .btn-warn,
+            .btn-teal {
+                width: 100%;
+            }
+
+            .inline-form button {
+                width: 100%;
+            }
         }
     </style>
 </head>
