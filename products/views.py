@@ -9,7 +9,7 @@ def is_organizer(user):
 
 
 def is_stall_owner(user, stall):
-    return stall.owner and stall.owner.user == user
+    return stall is not None and stall.owner and stall.owner.user == user
 
 
 # ================= PRODUCT LIST =================
@@ -88,6 +88,10 @@ def product_create(request):
 def edit_product(request, id):
     product = get_object_or_404(Product, id=id)
 
+    # Guard: product has no stall assigned — can't check ownership, can't redirect to stall page
+    if product.stall is None:
+        return redirect('product_list')
+
     if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
         return redirect('product_by_stall', stall_id=product.stall.id)
 
@@ -126,13 +130,13 @@ def edit_product(request, id):
 @login_required
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
-    stall_id = product.stall.id
+    stall_id = product.stall.id if product.stall else None
 
     if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
-        return redirect('product_by_stall', stall_id=stall_id)
+        return redirect('product_by_stall', stall_id=stall_id) if stall_id else redirect('product_list')
 
     if request.method == "POST":
         product.delete()
-        return redirect('product_by_stall', stall_id=stall_id)
+        return redirect('product_by_stall', stall_id=stall_id) if stall_id else redirect('product_list')
 
-    return redirect('product_by_stall', stall_id=stall_id)
+    return redirect('product_by_stall', stall_id=stall_id) if stall_id else redirect('product_list')
