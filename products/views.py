@@ -1,7 +1,10 @@
+import logging
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Product
 from owner.models import Stall
+
+logger = logging.getLogger(__name__)
 
 
 def is_organizer(user):
@@ -86,44 +89,48 @@ def product_create(request):
 # ================= EDIT PRODUCT =================
 @login_required
 def edit_product(request, id):
-    product = get_object_or_404(Product, id=id)
+    try:
+        product = get_object_or_404(Product, id=id)
 
-    # Guard: product has no stall assigned — can't check ownership, can't redirect to stall page
-    if product.stall is None:
-        return redirect('product_list')
+        # Guard: product has no stall assigned — can't check ownership, can't redirect to stall page
+        if product.stall is None:
+            return redirect('product_list')
 
-    if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
-        return redirect('product_by_stall', stall_id=product.stall.id)
-
-    if is_organizer(request.user):
-        stalls = Stall.objects.all()
-    else:
-        stalls = Stall.objects.filter(owner__user=request.user)
-
-    if request.method == "POST":
-        stall_id = request.POST.get('stall')
-        new_stall = get_object_or_404(Stall, id=stall_id)
-
-        if not is_organizer(request.user) and not is_stall_owner(request.user, new_stall):
+        if not is_organizer(request.user) and not is_stall_owner(request.user, product.stall):
             return redirect('product_by_stall', stall_id=product.stall.id)
 
-        product.name = request.POST.get('name')
-        product.price = request.POST.get('price')
-        product.description = request.POST.get('description') or ""
-        product.stall = new_stall
-        product.stock_quantity = int(request.POST.get('stock_quantity') or 0)
+        if is_organizer(request.user):
+            stalls = Stall.objects.all()
+        else:
+            stalls = Stall.objects.filter(owner__user=request.user)
 
-        if request.FILES.get('product_image'):
-            product.product_image = request.FILES.get('product_image')
+        if request.method == "POST":
+            stall_id = request.POST.get('stall')
+            new_stall = get_object_or_404(Stall, id=stall_id)
 
-        product.save()
+            if not is_organizer(request.user) and not is_stall_owner(request.user, new_stall):
+                return redirect('product_by_stall', stall_id=product.stall.id)
 
-        return redirect('product_by_stall', stall_id=product.stall.id)
+            product.name = request.POST.get('name')
+            product.price = request.POST.get('price')
+            product.description = request.POST.get('description') or ""
+            product.stall = new_stall
+            product.stock_quantity = int(request.POST.get('stock_quantity') or 0)
 
-    return render(request, 'products/edit_product.html', {
-        'product': product,
-        'stalls': stalls
-    })
+            if request.FILES.get('product_image'):
+                product.product_image = request.FILES.get('product_image')
+
+            product.save()
+
+            return redirect('product_by_stall', stall_id=product.stall.id)
+
+        return render(request, 'products/edit_product.html', {
+            'product': product,
+            'stalls': stalls
+        })
+    except Exception:
+        logger.exception("Error in edit_product for id=%s", id)
+        raise
 
 
 # ================= DELETE PRODUCT =================
