@@ -141,6 +141,9 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+print("CLOUDINARY CLOUD NAME:", os.environ.get('CLOUDINARY_CLOUD_NAME'))
+
+
 
 
 # =========================
