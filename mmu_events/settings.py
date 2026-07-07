@@ -1,3 +1,4 @@
+```python
 import os
 from pathlib import Path
 import dj_database_url
@@ -159,3 +160,4 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+```
